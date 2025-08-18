@@ -15,8 +15,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && cp public/_redirects build/_redirects",
-    "build:win": "react-scripts build && copy public\\_redirects build\\_redirects",
+    "build": "react-scripts build",
+    "postbuild": "cp public/_redirects build/ 2>/dev/null || echo '_redirects file handled by netlify.toml'",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

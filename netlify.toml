@@ -4,46 +4,10 @@
 
 [build.environment]
   NODE_VERSION = "18"
+  CI = "false"
 
 [[redirects]]
   from = "/*"
-  to = "/index.html"
-  status = 200
-  force = false
-  
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-
-# Ensure all routes go to index.html for SPA
-[[redirects]]
-  from = "/dashboard"
-  to = "/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/sites"
-  to = "/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/youtube"
-  to = "/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/boards"
-  to = "/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/masters"
-  to = "/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/profile"
   to = "/index.html"
   status = 200
 
