@@ -1,25 +1,43 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "마이스톡링크",
+  "name": "마이 스톡 링크 - 주식 투자 필수 사이트 모음",
+  "description": "주식 투자에 필요한 모든 사이트를 한 곳에서! 증권사, 뉴스, 분석 도구, 커뮤니티까지 주식 투자자를 위한 원스톱 링크 모음 서비스입니다.",
+  "lang": "ko",
+  "dir": "ltr",
   "icons": [
     {
       "src": "favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/x-icon",
+      "purpose": "any"
     },
     {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
       "src": "logo512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "categories": ["finance", "business", "productivity"],
+  "screenshots": [
+    {
+      "src": "logo512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "마이 스톡 링크 메인 화면"
+    }
+  ]
 }

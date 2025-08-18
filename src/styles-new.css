@@ -1,0 +1,1063 @@
+/* ==========================================================================
+   파스텔 톤 세련된 카드 디자인 - 추가 스타일시트
+   ========================================================================== */
+
+/* ==========================================================================
+   카드 공통 스타일
+   ========================================================================== */
+
+.site-card,
+.compact-site-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  position: relative;
+}
+
+.site-card:hover,
+.compact-site-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--card-shadow-hover);
+  background: var(--card-hover);
+  border-color: var(--primary-light);
+}
+
+/* ==========================================================================
+   사이트 카드 (기본 뷰)
+   ========================================================================== */
+
+.site-card {
+  margin-bottom: 16px;
+  min-height: 140px;
+}
+
+.site-card .card-content {
+  padding: 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.site-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.site-card .card-title-section {
+  flex: 1;
+  margin-right: 16px;
+}
+
+.site-card .site-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--card-foreground);
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.site-card .site-description {
+  font-size: 0.9rem;
+  color: var(--foreground-secondary);
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.site-card .card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+.site-card .card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.site-card .card-tags {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   컴팩트 사이트 카드
+   ========================================================================== */
+
+.compact-site-card {
+  margin-bottom: 12px;
+  min-height: 100px;
+  cursor: pointer;
+}
+
+.compact-card-content {
+  padding: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.compact-card-header {
+  margin-bottom: 12px;
+}
+
+.compact-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.compact-site-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--card-foreground);
+  margin: 0;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  margin-right: 12px;
+}
+
+.compact-site-description {
+  font-size: 0.85rem;
+  color: var(--foreground-secondary);
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.compact-card-actions {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+.compact-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.compact-tags {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   태그 스타일
+   ========================================================================== */
+
+.category-tag,
+.compact-category-tag,
+.difficulty-tag,
+.compact-difficulty-tag {
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--foreground-secondary);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.compact-category-tag,
+.compact-difficulty-tag {
+  padding: 3px 8px;
+  font-size: 0.7rem;
+}
+
+/* ==========================================================================
+   버튼 스타일
+   ========================================================================== */
+
+.favorite-btn-simple,
+.favorite-btn-compact,
+.remove-btn-simple,
+.remove-btn-compact {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.favorite-btn-compact,
+.remove-btn-compact {
+  padding: 6px;
+  font-size: 0.9rem;
+}
+
+.favorite-btn-simple:hover,
+.favorite-btn-compact:hover {
+  background: var(--accent-yellow);
+  transform: scale(1.1);
+}
+
+.favorite-btn-simple.favorited,
+.favorite-btn-compact.favorited {
+  background: var(--accent-yellow);
+}
+
+.remove-btn-simple:hover,
+.remove-btn-compact:hover {
+  background: var(--destructive-light);
+  transform: scale(1.1);
+}
+
+.visit-btn-simple,
+.compact-visit-btn {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.compact-visit-btn {
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  min-width: 36px;
+  justify-content: center;
+}
+
+.visit-btn-simple:hover,
+.compact-visit-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(167, 139, 250, 0.3);
+}
+
+.visit-icon {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.compact-visit-btn .visit-icon {
+  font-size: 0.8rem;
+}
+
+/* ==========================================================================
+   사용자 배지
+   ========================================================================== */
+
+.user-badge {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-left: 4px;
+}
+
+.site-card.user-submitted,
+.compact-site-card.user-submitted {
+  border-left: 3px solid var(--primary);
+}
+
+/* ==========================================================================
+   반응형 디자인
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .site-card .card-content,
+  .compact-card-content {
+    padding: 14px;
+  }
+  
+  .site-card .card-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .site-card .card-title-section {
+    margin-right: 0;
+  }
+  
+  .site-card .card-actions {
+    align-self: flex-end;
+  }
+  
+  .compact-title-row {
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+  }
+  
+  .compact-card-actions {
+    align-self: flex-end;
+  }
+  
+  .simple-card-content {
+    padding: 10px;
+  }
+  
+  .simple-card-main {
+    margin-right: 8px;
+  }
+  
+  .simple-card-info {
+    gap: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .site-card,
+  .compact-site-card,
+  .simple-favorite-card {
+    margin-bottom: 6px;
+  }
+  
+  .site-card .card-content,
+  .compact-card-content {
+    padding: 10px;
+  }
+  
+  .simple-card-content {
+    padding: 8px;
+  }
+  
+  .site-card .site-name {
+    font-size: 0.95rem;
+  }
+  
+  .compact-site-name {
+    font-size: 0.85rem;
+  }
+  
+  .simple-site-name {
+    font-size: 0.8rem;
+  }
+  
+  .category-tag,
+  .difficulty-tag {
+    padding: 2px 6px;
+    font-size: 0.65rem;
+  }
+  
+  .compact-category-tag,
+  .compact-difficulty-tag {
+    padding: 2px 5px;
+    font-size: 0.6rem;
+  }
+  
+  .simple-category-tag {
+    padding: 1px 5px;
+    font-size: 0.6rem;
+  }
+  
+  .visit-btn-simple,
+  .compact-visit-btn {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+  
+  .compact-visit-btn {
+    padding: 4px 8px;
+    min-width: 30px;
+  }
+}
+
+/* ==========================================================================
+   접근성 및 스크린 리더
+   ========================================================================== */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 포커스 스타일 개선 */
+.site-card:focus-within,
+.compact-site-card:focus-within {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+button:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   애니메이션
+   ========================================================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.site-card,
+.compact-site-card {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ==========================================================================
+   SimpleFavoriteCard 스타일
+   ========================================================================== */
+
+.simple-favorite-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  margin-bottom: 8px;
+  min-height: 70px;
+}
+
+.simple-favorite-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--card-shadow-hover);
+  background: var(--card-hover);
+  border-color: var(--primary-light);
+}
+
+.simple-card-content {
+  padding: 12px;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.simple-card-main {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  margin-right: 12px;
+}
+
+.simple-card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.simple-site-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--card-foreground);
+  margin: 0;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.simple-category-tag {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--foreground-secondary);
+  align-self: flex-start;
+  border: 1px solid transparent;
+}
+
+.simple-visit-icon {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  margin-left: 8px;
+  transition: all 0.2s ease;
+}
+
+.simple-card-main:hover .simple-visit-icon {
+  opacity: 1;
+  transform: translate(2px, -2px);
+}
+
+.simple-card-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.simple-favorite-btn,
+.simple-remove-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+}
+
+.simple-favorite-btn:hover {
+  background: var(--accent-yellow);
+  transform: scale(1.1);
+}
+
+.simple-favorite-btn.favorited {
+  background: var(--accent-yellow);
+}
+
+.simple-remove-btn:hover {
+  background: var(--destructive-light);
+  transform: scale(1.1);
+}
+
+.simple-favorite-card.user-submitted {
+  border-left: 3px solid var(--primary);
+}
+
+
+/* ==========================================================================
+   NewsFeed 스타일
+   ========================================================================== */
+
+.news-feed {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.news-header-section {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--card-border);
+  background: var(--accent-blue);
+}
+
+.news-title-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.news-main-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--card-foreground);
+  margin: 0;
+}
+
+.news-updated {
+  font-size: 0.8rem;
+  color: var(--foreground-secondary);
+}
+
+.news-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.category-tabs {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.category-tab {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--foreground-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.category-tab:hover {
+  background: var(--card-hover);
+  border-color: var(--primary-light);
+}
+
+.category-tab.active {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+
+.news-refresh-btn {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.news-refresh-btn:hover {
+  background: var(--primary-hover);
+  transform: scale(1.1);
+}
+
+.news-refresh-btn.loading {
+  animation: spin 1s linear infinite;
+}
+
+.news-content-area {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.news-list {
+  padding: 0;
+}
+
+.news-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--card-border);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.news-item:last-child {
+  border-bottom: none;
+}
+
+.news-item:hover {
+  background: var(--card-hover);
+}
+
+.news-item.hot {
+  border-left: 3px solid var(--destructive);
+}
+
+.news-content {
+  flex: 1;
+  margin-right: 12px;
+}
+
+.news-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+
+.news-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--card-foreground);
+  margin: 0;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hot-badge {
+  font-size: 0.8rem;
+}
+
+.news-time {
+  font-size: 0.7rem;
+  color: var(--muted-foreground);
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.news-summary {
+  font-size: 0.8rem;
+  color: var(--foreground-secondary);
+  line-height: 1.4;
+  margin: 0 0 8px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.news-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.news-source {
+  font-size: 0.7rem;
+  color: var(--muted-foreground);
+  font-weight: 500;
+}
+
+.news-category {
+  font-size: 0.7rem;
+  color: var(--primary);
+  background: var(--accent-purple);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.news-arrow {
+  font-size: 0.9rem;
+  color: var(--muted-foreground);
+  transition: all 0.2s ease;
+}
+
+.news-item:hover .news-arrow {
+  color: var(--primary);
+  transform: translate(2px, -2px);
+}
+
+.news-loading,
+.news-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: var(--muted-foreground);
+}
+
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border);
+  border-top: 2px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 12px;
+}
+
+/* ==========================================================================
+   애니메이션
+   ========================================================================== */
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   반응형 디자인 - 뉴스
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .news-header-section {
+    padding: 12px 16px;
+  }
+  
+  .news-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .category-tabs {
+    justify-content: center;
+  }
+  
+  .news-item {
+    padding: 12px 16px;
+  }
+  
+  .news-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .news-time {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .news-header-section {
+    padding: 10px 12px;
+  }
+  
+  .category-tab {
+    padding: 3px 8px;
+    font-size: 0.7rem;
+  }
+  
+  .news-item {
+    padding: 10px 12px;
+  }
+  
+  .news-content-area {
+    max-height: 300px;
+  }
+  
+  .news-main-title {
+    font-size: 1rem;
+  }
+}
+
+/* ==========================================================================
+   뉴스 섹션 스타일
+   ========================================================================== */
+
+.news-section {
+  padding: 0;
+}
+
+.news-header {
+  margin-bottom: 24px;
+  text-align: center;
+  padding: 24px 0;
+  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+  border-radius: 16px;
+  margin-bottom: 32px;
+}
+
+.news-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--card-foreground);
+  margin: 0 0 8px 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.news-subtitle {
+  font-size: 1rem;
+  color: var(--foreground-secondary);
+  margin: 0;
+  opacity: 0.9;
+}
+
+/* 뉴스 섹션 내의 뉴스피드 여백 조정 */
+.news-section .news-feed {
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+   사이드바 로그인 메뉴 스타일
+   ========================================================================== */
+
+.sidebar-auth {
+  margin-top: auto;
+  padding: 16px 12px;
+  border-top: 1px solid var(--sidebar-border);
+  background: var(--sidebar-accent);
+}
+
+.user-info-sidebar {
+  text-align: center;
+}
+
+.user-name-sidebar {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--sidebar-foreground);
+  margin-bottom: 4px;
+}
+
+.admin-badge-sidebar {
+  display: inline-block;
+  background: var(--destructive);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.auth-buttons-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-auth-btn {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  color: var(--sidebar-foreground);
+}
+
+.sidebar-auth-btn:hover {
+  background: var(--card-hover);
+  border-color: var(--primary-light);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-auth-btn.active {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+
+.sidebar-auth-btn.login-btn {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+
+.sidebar-auth-btn.login-btn:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.sidebar-auth-btn.register-btn {
+  background: var(--success);
+  color: white;
+  border-color: var(--success);
+}
+
+.sidebar-auth-btn.register-btn:hover {
+  background: #059669;
+  border-color: #059669;
+}
+
+.sidebar-auth-btn.logout-btn {
+  background: var(--destructive-light);
+  color: var(--destructive);
+  border-color: var(--destructive-light);
+}
+
+.sidebar-auth-btn.logout-btn:hover {
+  background: var(--destructive);
+  color: white;
+  border-color: var(--destructive);
+}
+
+/* ==========================================================================
+   반응형 디자인 - 사이드바 로그인 메뉴
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .sidebar-auth {
+    padding: 12px 8px;
+  }
+  
+  .user-name-sidebar {
+    font-size: 0.8rem;
+  }
+  
+  .admin-badge-sidebar {
+    font-size: 0.65rem;
+    padding: 1px 6px;
+  }
+  
+  .sidebar-auth-btn {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    gap: 4px;
+  }
+  
+  .auth-buttons-sidebar {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-auth {
+    padding: 8px 6px;
+  }
+  
+  .user-name-sidebar {
+    font-size: 0.75rem;
+  }
+  
+  .admin-badge-sidebar {
+    font-size: 0.6rem;
+    padding: 1px 4px;
+    margin-bottom: 8px;
+  }
+  
+  .sidebar-auth-btn {
+    padding: 4px 8px;
+    font-size: 0.7rem;
+    gap: 3px;
+  }
+  
+  .auth-buttons-sidebar {
+    gap: 4px;
+  }
+}
+
+/* ==========================================================================
+   다크 모드 대응 (추후 확장용)
+   ========================================================================== */
+
+/* 다크 모드 설정을 비활성화하여 항상 밝은 테마 사용 */
+/*
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1a1a2e;
+    --card: #16213e;
+    --card-hover: #1e2749;
+    --card-foreground: #e2e8f0;
+    --card-border: #2d3748;
+  }
+}
+*/

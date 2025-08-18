@@ -1,0 +1,544 @@
+/* ==========================================================================
+   카테고리 박스 레이아웃 스타일 (PornDude 스타일)
+   ========================================================================== */
+
+.category-box-layout {
+  padding: 20px 0;
+}
+
+.category-boxes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   카테고리 박스 기본 스타일
+   ========================================================================== */
+
+.category-box {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.category-box:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   카테고리 헤더
+   ========================================================================== */
+
+.category-header {
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--card-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.category-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 100%);
+  pointer-events: none;
+}
+
+.category-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--card-foreground);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.category-icon {
+  font-size: 1.3rem;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+}
+
+.category-count {
+  background: rgba(255,255,255,0.2);
+  color: var(--card-foreground);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* ==========================================================================
+   카테고리 콘텐츠
+   ========================================================================== */
+
+.category-content {
+  padding: 20px 24px;
+  min-height: 120px;
+}
+
+.sites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+/* ==========================================================================
+   사이트 박스 아이템
+   ========================================================================== */
+
+.site-box-item {
+  background: var(--background-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.site-box-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--primary) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.site-box-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(167, 139, 250, 0.15);
+  border-color: var(--primary-light);
+  background: var(--card-hover);
+}
+
+.site-box-item:hover::before {
+  opacity: 0.03;
+}
+
+.site-box-item.user-submitted {
+  border-left: 3px solid var(--primary);
+}
+
+.site-box-item:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   사이트 박스 콘텐츠
+   ========================================================================== */
+
+.site-box-content {
+  position: relative;
+  z-index: 1;
+}
+
+.site-box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.site-box-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--card-foreground);
+  margin: 0;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  margin-right: 12px;
+}
+
+.site-box-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.site-favorite-btn,
+.site-remove-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+.site-favorite-btn:hover {
+  background: var(--accent-yellow);
+  transform: scale(1.1);
+}
+
+.site-favorite-btn.favorited {
+  background: var(--accent-yellow);
+}
+
+.site-remove-btn:hover {
+  background: var(--destructive-light);
+  transform: scale(1.1);
+}
+
+.site-box-description {
+  font-size: 0.85rem;
+  color: var(--foreground-secondary);
+  line-height: 1.4;
+  margin: 0 0 12px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.site-box-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.site-box-difficulty {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  background: var(--muted);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.site-box-link-icon {
+  font-size: 0.9rem;
+  color: var(--muted-foreground);
+  transition: all 0.2s ease;
+}
+
+.site-box-item:hover .site-box-link-icon {
+  color: var(--primary);
+  transform: translate(2px, -2px);
+}
+
+/* ==========================================================================
+   빈 카테고리 스타일
+   ========================================================================== */
+
+.category-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: var(--muted-foreground);
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+  opacity: 0.6;
+}
+
+.category-empty p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   사용자 배지
+   ========================================================================== */
+
+.user-badge {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-left: 4px;
+}
+
+/* ==========================================================================
+   반응형 디자인
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .category-box-layout {
+    padding: 16px 0;
+  }
+  
+  .category-boxes-container {
+    gap: 20px;
+    padding: 0 16px;
+  }
+  
+  .category-header {
+    padding: 12px 16px;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  
+  .category-title {
+    font-size: 1.1rem;
+  }
+  
+  .category-content {
+    padding: 16px;
+  }
+  
+  .sites-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .site-box-item {
+    padding: 12px;
+  }
+  
+  .site-box-header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  
+  .site-box-name {
+    margin-right: 0;
+  }
+  
+  .site-box-actions {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .category-boxes-container {
+    padding: 0 12px;
+    gap: 16px;
+  }
+  
+  .category-header {
+    padding: 10px 12px;
+  }
+  
+  .category-title {
+    font-size: 1rem;
+  }
+  
+  .category-content {
+    padding: 12px;
+  }
+  
+  .site-box-item {
+    padding: 10px;
+  }
+  
+  .site-box-name {
+    font-size: 0.9rem;
+  }
+  
+  .site-box-description {
+    font-size: 0.8rem;
+    -webkit-line-clamp: 1;
+  }
+  
+  .category-count {
+    padding: 3px 8px;
+    font-size: 0.8rem;
+  }
+}
+
+/* ==========================================================================
+   대형 화면 최적화
+   ========================================================================== */
+
+@media (min-width: 1200px) {
+  .sites-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  
+  .category-content {
+    padding: 24px;
+  }
+  
+  .site-box-item {
+    padding: 20px;
+  }
+}
+
+/* ==========================================================================
+   애니메이션
+   ========================================================================== */
+
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.category-box {
+  animation: slideInFromTop 0.4s ease-out;
+}
+
+.category-box:nth-child(1) { animation-delay: 0ms; }
+.category-box:nth-child(2) { animation-delay: 100ms; }
+.category-box:nth-child(3) { animation-delay: 200ms; }
+.category-box:nth-child(4) { animation-delay: 300ms; }
+.category-box:nth-child(5) { animation-delay: 400ms; }
+
+/* ==========================================================================
+   레이아웃 토글 스타일
+   ========================================================================== */
+
+.layout-toggle-container {
+  margin-bottom: 20px;
+}
+
+.layout-toggle-header {
+  margin-bottom: 12px;
+}
+
+.layout-toggle-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--card-foreground);
+  margin: 0 0 4px 0;
+}
+
+.layout-toggle-subtitle {
+  font-size: 0.85rem;
+  color: var(--foreground-secondary);
+}
+
+.layout-toggle-options {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.layout-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 200px;
+  text-align: left;
+}
+
+.layout-option:hover {
+  background: var(--card-hover);
+  border-color: var(--primary-light);
+  transform: translateY(-1px);
+  box-shadow: var(--card-shadow);
+}
+
+.layout-option.active {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.layout-option.active .layout-option-label,
+.layout-option.active .layout-option-description {
+  color: var(--primary-foreground);
+}
+
+.layout-option-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.layout-option-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.layout-option-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--card-foreground);
+}
+
+.layout-option-description {
+  font-size: 0.75rem;
+  color: var(--foreground-secondary);
+  line-height: 1.3;
+}
+
+/* ==========================================================================
+   포커스 및 접근성
+   ========================================================================== */
+
+.site-box-item:focus-within {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.site-favorite-btn:focus,
+.site-remove-btn:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.layout-option:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   레이아웃 토글 반응형
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .layout-toggle-options {
+    flex-direction: column;
+  }
+  
+  .layout-option {
+    min-width: auto;
+  }
+}

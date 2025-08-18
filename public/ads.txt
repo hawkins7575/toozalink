@@ -1,0 +1,9 @@
+# ads.txt file for My Stock Link
+# This file is used for Google AdSense verification
+# Add your AdSense publisher ID when you get approved
+
+# Example format:
+# google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
+
+# Placeholder - replace with actual publisher ID after AdSense approval
+# google.com, pub-XXXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0

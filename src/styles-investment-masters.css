@@ -1,0 +1,468 @@
+/* ==========================================================================
+   투자의 대가 페이지 스타일
+   ========================================================================== */
+
+.investment-masters-layout {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.masters-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  color: #334155;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+}
+
+.masters-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  text-shadow: none;
+}
+
+.masters-header p {
+  font-size: 1.1rem;
+  margin: 0;
+  opacity: 0.7;
+}
+
+/* 마스터 카드 그리드 */
+.masters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.master-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.master-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border-color: #3b82f6;
+}
+
+.master-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  transition: height 0.3s ease;
+}
+
+.master-card:hover::before {
+  height: 8px;
+}
+
+/* 마스터 이미지 */
+.master-image-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.master-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.master-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(59, 130, 246, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.master-card:hover .master-overlay {
+  opacity: 1;
+}
+
+.master-card:hover .master-image {
+  transform: scale(1.1);
+}
+
+.master-view-icon {
+  font-size: 2rem;
+  color: white;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* 마스터 정보 */
+.master-info {
+  text-align: center;
+}
+
+.master-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+}
+
+.master-title {
+  font-size: 1rem;
+  color: #3b82f6;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+.master-company {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0 0 16px 0;
+}
+
+.master-philosophy {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 20px;
+  margin-top: 12px;
+}
+
+.philosophy-label {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.philosophy-value {
+  font-size: 0.8rem;
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+/* 모달 스타일 */
+.master-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(8px);
+}
+
+.master-modal-container {
+  background: white;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  position: relative;
+}
+
+.master-modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 32px;
+  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+.master-modal-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
+}
+
+.master-modal-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.master-modal-basic-info {
+  flex: 1;
+}
+
+.master-modal-basic-info h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+}
+
+.master-name-en {
+  font-size: 1.2rem;
+  color: #6b7280;
+  font-style: italic;
+  margin: 0 0 12px 0;
+}
+
+.master-modal-title {
+  font-size: 1.1rem;
+  color: #3b82f6;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.master-modal-company {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0 0 16px 0;
+}
+
+.master-modal-philosophy {
+  background: rgba(59, 130, 246, 0.1);
+  padding: 12px 16px;
+  border-radius: 12px;
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close-btn:hover {
+  background: white;
+  color: #ef4444;
+  transform: scale(1.1);
+}
+
+/* 모달 콘텐츠 */
+.master-modal-content {
+  padding: 32px;
+}
+
+.master-modal-content h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.master-description {
+  margin-bottom: 32px;
+}
+
+.master-description p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+
+.master-quote {
+  margin-bottom: 32px;
+  background: #f8fafc;
+  padding: 24px;
+  border-radius: 12px;
+  border-left: 4px solid #3b82f6;
+}
+
+.master-quote blockquote {
+  font-size: 1.1rem;
+  font-style: italic;
+  color: #1f2937;
+  margin: 0;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.master-biography {
+  margin-bottom: 32px;
+}
+
+.master-biography p {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+
+.master-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+}
+
+.master-achievements,
+.master-investment-style,
+.master-investments,
+.master-books {
+  background: #f8fafc;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.master-achievements ul,
+.master-investment-style ul,
+.master-investments ul,
+.master-books ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.master-achievements li,
+.master-investment-style li,
+.master-investments li,
+.master-books li {
+  padding: 8px 0;
+  color: #4b5563;
+  border-bottom: 1px solid #e5e7eb;
+  position: relative;
+  padding-left: 20px;
+}
+
+.master-achievements li:last-child,
+.master-investment-style li:last-child,
+.master-investments li:last-child,
+.master-books li:last-child {
+  border-bottom: none;
+}
+
+.master-achievements li::before,
+.master-investment-style li::before,
+.master-investments li::before,
+.master-books li::before {
+  content: '•';
+  color: #3b82f6;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .investment-masters-layout {
+    padding: 16px;
+  }
+  
+  .masters-header {
+    padding: 24px 16px;
+    margin-bottom: 24px;
+  }
+  
+  .masters-header h1 {
+    font-size: 2rem;
+  }
+  
+  .masters-header p {
+    font-size: 1rem;
+  }
+  
+  .masters-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .master-card {
+    padding: 20px;
+  }
+  
+  .master-image-container {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .master-modal-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+    padding: 24px;
+  }
+  
+  .master-modal-content {
+    padding: 24px;
+  }
+  
+  .master-details-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .master-modal-overlay {
+    padding: 10px;
+  }
+  
+  .master-modal-container {
+    max-height: 95vh;
+  }
+  
+  .master-modal-header {
+    padding: 20px;
+  }
+  
+  .master-modal-basic-info h2 {
+    font-size: 1.5rem;
+  }
+  
+  .master-modal-content {
+    padding: 20px;
+  }
+}
