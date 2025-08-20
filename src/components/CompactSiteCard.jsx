@@ -34,7 +34,6 @@ const CompactSiteCard = ({ site, isFavorite, onToggleFavorite, onRemove }) => {
   return (
     <article 
       className={`compact-site-card ${site.isUserSubmitted ? 'user-submitted' : ''}`}
-      role="article"
       aria-label={`${site.name} - ${site.description}`}
     >
       <div className="compact-card-content">
@@ -74,7 +73,6 @@ const CompactSiteCard = ({ site, isFavorite, onToggleFavorite, onRemove }) => {
                 )}
               </div>
             </div>
-            <p className="compact-site-description">{site.description}</p>
           </div>
         </div>
         

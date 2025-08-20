@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import YoutubeSection from "./components/YoutubeSection";
 import Dashboard from "./components/Dashboard";
 import AddSite from "./components/AddSite";
-import RecommendationBoard from "./components/RecommendationBoard";
+// import RecommendationBoard from "./components/RecommendationBoard";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -12,6 +12,7 @@ import AdminPanel from "./components/AdminPanel";
 import FourSectionLayout from "./components/FourSectionLayout";
 import InvestmentMasters from "./components/InvestmentMasters";
 import BoardSelector from "./components/BoardSelector";
+import MobileHeader from "./components/MobileHeader";
 import useUserSubmissions from "./hooks/useUserSubmissions";
 import useAuth from "./hooks/useAuth";
 import "./styles.css";
@@ -20,6 +21,7 @@ import "./styles-category-box.css";
 import "./styles-youtube-category.css";
 import "./styles-four-section.css";
 import "./modal-styles.css";
+import "./styles-mobile-optimized.css";
 
 function App() {
   const { user, isLoading, isAuthenticated, isAdmin, login, logout, register, updateUser } = useAuth();
@@ -28,6 +30,7 @@ function App() {
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [, setDataVersion] = useState(0); // 데이터 업데이트 트리거
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
   const [favorites, setFavorites] = useState(() => {
     try {
@@ -106,13 +109,9 @@ function App() {
     alert(`${newChannel.name}이(가) 성공적으로 추가되었습니다!`);
   }, [addUserYoutubeChannel]);
 
-  const handleSidebarAdd = useCallback(() => {
-    if (currentView === "youtube") {
-      setShowAddYoutubeModal(true);
-    } else {
-      setShowAddSiteModal(true);
-    }
-  }, [currentView]);
+  const handleToggleSidebar = useCallback(() => {
+    setSidebarOpen(prev => !prev);
+  }, []);
 
   const handleLogin = useCallback((userData) => {
     login(userData);
@@ -207,7 +206,24 @@ function App() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
         <div className="app-layout">
-          <nav className="sidebar" role="navigation" aria-label="메인 네비게이션">
+          <MobileHeader
+            currentView={currentView}
+            onMenuToggle={handleToggleSidebar}
+            user={user}
+            isAuthenticated={isAuthenticated}
+            onShowLogin={handleShowLogin}
+            onShowRegister={handleShowRegister}
+          />
+          
+          {/* 사이드바 오버레이 */}
+          {sidebarOpen && (
+            <div 
+              className="sidebar-overlay" 
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
+          
+          <nav className={`sidebar ${sidebarOpen ? 'open' : ''}`} role="navigation" aria-label="메인 네비게이션">
             <div className="sidebar-header">
               <h2 className="sidebar-title">tooza link</h2>
              </div>

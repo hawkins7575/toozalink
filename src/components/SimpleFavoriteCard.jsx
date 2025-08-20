@@ -23,7 +23,7 @@ const SimpleFavoriteCard = ({ site, isFavorite, onToggleFavorite, onRemove }) =>
   };
 
   return (
-    <article className={`simple-favorite-card ${site.isUserSubmitted ? 'user-submitted' : ''}`} role="article">
+    <article className={`simple-favorite-card ${site.isUserSubmitted ? 'user-submitted' : ''}`}>
       <div className="simple-card-content">
         <div className="simple-card-main" onClick={handleVisit}>
           <div className="simple-card-info">

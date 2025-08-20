@@ -139,11 +139,6 @@ const YoutubeCategoryBoxLayout = ({
                           </div>
                         </div>
                         
-                        {channel.description && (
-                          <p className="youtube-channel-description">
-                            {channel.description}
-                          </p>
-                        )}
                         
                         <div className="youtube-channel-footer">
                           <div className="youtube-channel-info">
