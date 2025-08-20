@@ -1,1 +1,9 @@
+# www를 non-www로 리다이렉트
+https://www.tooza.shop/* https://tooza.shop/:splat 301!
+
+# HTTP를 HTTPS로 리다이렉트
+http://tooza.shop/* https://tooza.shop/:splat 301!
+http://www.tooza.shop/* https://tooza.shop/:splat 301!
+
+# SPA 라우팅 지원
 /*    /index.html   200
