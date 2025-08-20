@@ -162,6 +162,9 @@ function App() {
   const handleDataUpdate = useCallback(() => {
     // 데이터 버전을 증가시켜 컴포넌트들이 리렌더링되도록 함
     setDataVersion(prev => prev + 1);
+    
+    // 카테고리 업데이트 이벤트 발생
+    window.dispatchEvent(new CustomEvent('categoryUpdate'));
   }, []);
 
   // 로딩 중일 때

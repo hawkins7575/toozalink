@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { categories } from '../data';
+import { getCategories } from '../data';
 
 const CategoryBoxLayout = ({ 
   sites, 
@@ -9,6 +9,31 @@ const CategoryBoxLayout = ({
   onRemoveSite,
   onSiteClick 
 }) => {
+  const [categories, setCategories] = useState([]);
+
+  // 카테고리 데이터 로드
+  useEffect(() => {
+    const loadCategories = () => {
+      const currentCategories = getCategories();
+      setCategories(currentCategories);
+    };
+
+    loadCategories();
+    
+    // 카테고리 업데이트 이벤트 감지
+    const handleCategoryUpdate = () => {
+      loadCategories();
+    };
+    
+    window.addEventListener('categoryUpdate', handleCategoryUpdate);
+    window.addEventListener('storage', handleCategoryUpdate);
+    
+    return () => {
+      window.removeEventListener('categoryUpdate', handleCategoryUpdate);
+      window.removeEventListener('storage', handleCategoryUpdate);
+    };
+  }, []);
+
   // 카테고리별로 사이트들을 그룹화
   const sitesByCategory = useMemo(() => {
     const grouped = {};

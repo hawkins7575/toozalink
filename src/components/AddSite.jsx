@@ -1,13 +1,15 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
-import { categories, youtubeCategories } from "../data";
+import { getCategories, getYoutubeCategories } from "../data";
 
 const AddSite = React.memo(({ isOpen, onClose, onSubmit, type = "site" }) => {
+  const [categories, setCategories] = useState([]);
+  const [youtubeCategories, setYoutubeCategories] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     url: "",
     description: "",
-    category: type === "site" ? categories[1] : youtubeCategories[1], // 첫 번째 실제 카테고리
+    category: "",
     tags: "",
     tips: "",
     difficulty: "쉬움"
@@ -15,6 +17,41 @@ const AddSite = React.memo(({ isOpen, onClose, onSubmit, type = "site" }) => {
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 카테고리 데이터 로드
+  useEffect(() => {
+    const loadCategories = () => {
+      const siteCategories = getCategories();
+      const ytCategories = getYoutubeCategories();
+      setCategories(siteCategories);
+      setYoutubeCategories(ytCategories);
+      
+      // 첫 번째 실제 카테고리를 기본값으로 설정
+      const defaultCategory = type === "site" 
+        ? (siteCategories.find(cat => cat !== '전체') || siteCategories[0])
+        : (ytCategories.find(cat => cat !== '전체') || ytCategories[0]);
+      
+      setFormData(prev => ({
+        ...prev,
+        category: defaultCategory || ""
+      }));
+    };
+
+    if (isOpen) {
+      loadCategories();
+      
+      // 카테고리 업데이트 이벤트 감지
+      const handleCategoryUpdate = () => {
+        loadCategories();
+      };
+      
+      window.addEventListener('categoryUpdate', handleCategoryUpdate);
+      
+      return () => {
+        window.removeEventListener('categoryUpdate', handleCategoryUpdate);
+      };
+    }
+  }, [isOpen, type]);
 
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
