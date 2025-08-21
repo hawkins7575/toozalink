@@ -141,6 +141,11 @@ const FourSectionLayout = ({ favorites, onToggleFavorite, onSiteClick }) => {
         color: 'purple', 
         icon: '📋', 
         subtitle: '금융정보 종합포털' 
+      },
+      '미국주식': {
+        color: 'red',
+        icon: '🇺🇸',
+        subtitle: '미국 주식 거래 플랫폼'
       }
     };
     return infoMap[category] || { color: 'blue', icon: '📊', subtitle: '투자 관련 서비스' };

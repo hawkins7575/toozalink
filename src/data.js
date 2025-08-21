@@ -96,9 +96,111 @@ const defaultStockSites = [
     difficulty: "보통"
   },
   
-  // ② 공공데이터
+  // ② 미국주식
   {
     id: 5,
+    name: "Interactive Brokers",
+    url: "https://www.interactivebrokers.com",
+    description: "미국 주식 거래, 낮은 수수료, 전문 트레이딩 플랫폼",
+    category: "미국주식",
+    tags: ["미국", "유료", "전문가용", "낮은수수료", "트레이딩플랫폼"],
+    tips: "전문 투자자를 위한 고급 트레이딩 도구와 낮은 수수료",
+    difficulty: "어려움"
+  },
+  {
+    id: 6,
+    name: "Charles Schwab",
+    url: "https://www.schwab.com",
+    description: "미국 주식 무료 거래, 투자 도구, 리서치 제공",
+    category: "미국주식",
+    tags: ["미국", "무료거래", "리서치", "투자도구", "초보자친화"],
+    tips: "수수료 없는 주식 거래와 풍부한 투자 교육 자료",
+    difficulty: "보통"
+  },
+  {
+    id: 7,
+    name: "Fidelity",
+    url: "https://www.fidelity.com",
+    description: "미국 주식 거래, 뮤추얼 펀드, 은퇴 계획",
+    category: "미국주식",
+    tags: ["미국", "무료거래", "뮤추얼펀드", "은퇴계획", "종합서비스"],
+    tips: "종합 금융 서비스와 우수한 고객 서비스로 유명",
+    difficulty: "보통"
+  },
+  {
+    id: 8,
+    name: "E*TRADE",
+    url: "https://us.etrade.com",
+    description: "미국 주식 온라인 거래, 모바일 트레이딩",
+    category: "미국주식",
+    tags: ["미국", "온라인거래", "모바일", "사용자친화적", "교육자료"],
+    tips: "사용하기 쉬운 플랫폼과 풍부한 교육 자료 제공",
+    difficulty: "쉬움"
+  },
+  {
+    id: 9,
+    name: "TD Ameritrade",
+    url: "https://www.tdameritrade.com",
+    description: "미국 주식 거래, thinkorswim 플랫폼",
+    category: "미국주식",
+    tags: ["미국", "thinkorswim", "고급플랫폼", "차트분석", "전문가용"],
+    tips: "thinkorswim 플랫폼으로 전문적인 차트 분석 제공",
+    difficulty: "어려움"
+  },
+  {
+    id: 10,
+    name: "Robinhood",
+    url: "https://robinhood.com",
+    description: "미국 주식 무료 거래, 모바일 중심 플랫폼",
+    category: "미국주식",
+    tags: ["미국", "무료거래", "모바일중심", "간편한UI", "초보자용"],
+    tips: "간편한 모바일 앱으로 주식 투자 입문자에게 인기",
+    difficulty: "쉬움"
+  },
+  {
+    id: 11,
+    name: "Webull",
+    url: "https://www.webull.com",
+    description: "미국 주식 무료 거래, 고급 차트 분석",
+    category: "미국주식",
+    tags: ["미국", "무료거래", "고급차트", "실시간데이터", "분석도구"],
+    tips: "무료 거래와 전문적인 차트 분석 도구 제공",
+    difficulty: "보통"
+  },
+  {
+    id: 12,
+    name: "FINRA BrokerCheck",
+    url: "https://brokercheck.finra.org",
+    description: "미국 브로커 검증, 투자자 보호 정보",
+    category: "미국주식",
+    tags: ["미국", "무료", "브로커검증", "투자자보호", "필수확인"],
+    tips: "미국 브로커 선택 전 반드시 확인해야 하는 공식 검증 사이트",
+    difficulty: "쉬움"
+  },
+  {
+    id: 13,
+    name: "SEC.gov",
+    url: "https://www.sec.gov",
+    description: "미국 증권거래위원회, 투자자 교육, 공시 정보",
+    category: "미국주식",
+    tags: ["미국", "무료", "정부기관", "투자자교육", "공시정보"],
+    tips: "미국 투자 규정과 투자자 보호 정보의 공식 출처",
+    difficulty: "보통"
+  },
+  {
+    id: 14,
+    name: "Morningstar",
+    url: "https://www.morningstar.com",
+    description: "미국 주식 분석, 펀드 평가, 투자 리서치",
+    category: "미국주식",
+    tags: ["미국", "유료", "주식분석", "펀드평가", "전문리서치"],
+    tips: "독립적인 투자 분석과 펀드 평가로 유명한 권위 있는 사이트",
+    difficulty: "보통"
+  },
+
+  // ③ 공공데이터
+  {
+    id: 15,
     name: "공공데이터포털 (금융위 오픈API)",
     url: "https://www.data.go.kr",
     description: "주식시세 API, 실시간·과거 시세",
@@ -108,7 +210,7 @@ const defaultStockSites = [
     difficulty: "어려움"
   },
   {
-    id: 6,
+    id: 16,
     name: "통계청·KOSIS",
     url: "https://kosis.kr",
     description: "코스피·산업별 투자지표 통계",
@@ -118,9 +220,9 @@ const defaultStockSites = [
     difficulty: "보통"
   },
   
-  // ③ 주요 포털
+  // ④ 주요 포털
   {
-    id: 7,
+    id: 17,
     name: "네이버 금융",
     url: "https://finance.naver.com",
     description: "시세, 차트, 공시, 환율, 뉴스, 스크리너",
@@ -130,7 +232,7 @@ const defaultStockSites = [
     difficulty: "쉬움"
   },
   {
-    id: 8,
+    id: 18,
     name: "다음 금융",
     url: "https://finance.daum.net",
     description: "코스피·코스닥 시세, 뉴스, 지수별 특징주",
@@ -140,7 +242,7 @@ const defaultStockSites = [
     difficulty: "쉬움"
   },
   {
-    id: 9,
+    id: 19,
     name: "야후 파이낸스",
     url: "https://finance.yahoo.com",
     description: "글로벌 주식 정보 및 뉴스 제공",
@@ -150,7 +252,7 @@ const defaultStockSites = [
     difficulty: "쉬움"
   },
   {
-    id: 10,
+    id: 20,
     name: "한국경제 마켓맵·증권",
     url: "https://markets.hankyung.com",
     description: "시장지도, 이코노믹 캘린더, 종목 검색",
@@ -160,7 +262,7 @@ const defaultStockSites = [
     difficulty: "쉬움"
   },
   {
-    id: 11,
+    id: 21,
     name: "매일경제 마켓",
     url: "https://stock.mk.co.kr",
     description: "지수·업종·종목랭킹·ETF·뉴스",
@@ -170,9 +272,9 @@ const defaultStockSites = [
     difficulty: "쉬움"
   },
   
-  // ④ 증권사 플랫폼
+  // ⑤ 증권사 플랫폼
   {
-    id: 12,
+    id: 22,
     name: "키움증권 영웅문4 / Open API+",
     url: "https://www.kiwoom.com",
     description: "HTS/Web/모바일, 차트·조건검색, 시세·잔고·주문 API",
@@ -997,7 +1099,8 @@ const defaultCategories = [
   "증권사",
   "뉴스/정보",
   "분석/데이터",
-  "커뮤니티"
+  "커뮤니티",
+  "미국주식"
 ];
 
 const defaultYoutubeCategories = [
