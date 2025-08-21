@@ -28,9 +28,7 @@ const Login = ({ onLogin, onSwitchToRegister, onClose }) => {
     const newErrors = {};
     
     if (!formData.email.trim()) {
-      newErrors.email = '이메일을 입력해주세요';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = '올바른 이메일 형식을 입력해주세요';
+      newErrors.email = '이메일 또는 아이디를 입력해주세요';
     }
     
     if (!formData.password.trim()) {
@@ -55,13 +53,15 @@ const Login = ({ onLogin, onSwitchToRegister, onClose }) => {
     setErrors({});
     
     try {
-      // 관리자 계정 확인
+      // 관리자 계정 확인 (아이디 또는 이메일)
       const ADMIN_CREDENTIALS = {
-        email: 'daesung75',
+        username: 'daesung75',
+        email: 'daesung75@admin.com',
         password: 'wlsl3014'
       };
 
-      if (formData.email === ADMIN_CREDENTIALS.email && formData.password === ADMIN_CREDENTIALS.password) {
+      if ((formData.email === ADMIN_CREDENTIALS.username || formData.email === ADMIN_CREDENTIALS.email) && 
+          formData.password === ADMIN_CREDENTIALS.password) {
         // 관리자 로그인 성공
         const adminLoginData = {
           id: 'admin',
@@ -76,9 +76,12 @@ const Login = ({ onLogin, onSwitchToRegister, onClose }) => {
         return;
       }
 
-      // 일반 사용자 확인
+      // 일반 사용자 확인 (이메일 또는 사용자명으로)
       const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const user = users.find(u => u.email === formData.email && u.password === formData.password);
+      const user = users.find(u => 
+        (u.email === formData.email || u.name === formData.email || u.username === formData.email) && 
+        u.password === formData.password
+      );
       
       if (user) {
         // 일반 사용자 로그인 성공
@@ -128,15 +131,15 @@ const Login = ({ onLogin, onSwitchToRegister, onClose }) => {
           )}
           
           <div className="form-group">
-            <label htmlFor="email">이메일</label>
+            <label htmlFor="email">이메일 또는 아이디</label>
             <input
-              type="email"
+              type="text"
               id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               className={errors.email ? 'error' : ''}
-              placeholder="이메일을 입력하세요"
+              placeholder="이메일 또는 아이디를 입력하세요"
               disabled={isLoading}
             />
             {errors.email && <span className="error-message">{errors.email}</span>}
@@ -167,13 +170,6 @@ const Login = ({ onLogin, onSwitchToRegister, onClose }) => {
         </form>
         
         <div className="auth-footer">
-          <div className="admin-info">
-            <p><strong>🔐 관리자 로그인 정보:</strong></p>
-            <p>아이디: daesung75</p>
-            <p>비밀번호: wlsl3014</p>
-            <small>* 관리자 전용 계정입니다.</small>
-          </div>
-          
           <p>
             계정이 없으신가요?{' '}
             <button 
