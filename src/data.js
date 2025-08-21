@@ -1,29 +1,55 @@
 import { supabase } from './lib/supabase';
+import { performanceMonitor, optimizedQueryBuilder } from './utils/dbOptimizer';
 
-// Supabase 연결 상태 확인
-let isSupabaseConnected = false;
-
-// 연결 테스트 (지연 실행)
-const testSupabaseConnection = async () => {
-  try {
-    // 3초 후에 백그라운드에서 연결 테스트
-    setTimeout(async () => {
-      try {
-        const { error } = await supabase.from('categories').select('count');
-        if (!error) {
-          isSupabaseConnected = true;
-          console.log('✅ Supabase 연결 성공 (백그라운드)');
-        }
-      } catch (err) {
-        console.warn('⚠️ Supabase 연결 실패, localStorage 사용');
-      }
-    }, 3000);
-  } catch (err) {
-    console.warn('⚠️ Supabase 연결 테스트 스케줄링 실패');
-  }
+// 데이터 캐시 및 연결 상태 관리
+let dataCache = {
+  sites: { data: null, timestamp: 0, ttl: 300000 }, // 5분 TTL
+  channels: { data: null, timestamp: 0, ttl: 300000 },
+  categories: { data: null, timestamp: 0, ttl: 600000 }, // 10분 TTL (더 오래 캐시)
+  youtubeCategories: { data: null, timestamp: 0, ttl: 600000 }
 };
 
-// 앱 로딩 후 백그라운드에서 연결 테스트
+let isSupabaseConnected = false;
+let connectionPromise = null; // 연결 테스트 중복 방지
+
+// 비동기 연결 테스트 (중복 방지 및 성능 최적화)
+const testSupabaseConnection = async () => {
+  if (connectionPromise) return connectionPromise;
+  
+  connectionPromise = new Promise(async (resolve) => {
+    try {
+      // 지연된 연결 테스트
+      setTimeout(async () => {
+        try {
+          const { error } = await supabase
+            .from('categories')
+            .select('id')
+            .limit(1)
+            .single();
+            
+          if (!error || error.code === 'PGRST116') {
+            isSupabaseConnected = true;
+            console.log('✅ Supabase 연결 성공 (백그라운드)');
+            resolve(true);
+          } else {
+            throw error;
+          }
+        } catch (err) {
+          console.warn('⚠️ Supabase 연결 실패, localStorage 사용');
+          isSupabaseConnected = false;
+          resolve(false);
+        }
+      }, 2000); // 3초 -> 2초로 단축
+    } catch (err) {
+      console.warn('⚠️ Supabase 연결 테스트 스케줄링 실패');
+      resolve(false);
+    }
+  });
+  
+  return connectionPromise;
+};
+
+// 앱 로딩 후 비동기 연결 테스트
 testSupabaseConnection();
 
 // 기본 주식 사이트 데이터 (폴백용)
@@ -1005,91 +1031,176 @@ export const allTags = [
   "창투사", "작전주", "차트분석", "기술적분석"
 ];
 
-// 동적 데이터 로딩 함수들 (Supabase + localStorage 통합)
+// 캐시 유효성 검사 함수
+const isCacheValid = (cacheItem) => {
+  return cacheItem.data && (Date.now() - cacheItem.timestamp) < cacheItem.ttl;
+};
+
+// 동적 데이터 로딩 함수들 (성능 최적화 + 캐시)
 export const getStockSites = async () => {
-  // Supabase에서 데이터 시도
+  // 1. 캐시 확인
+  if (isCacheValid(dataCache.sites)) {
+    console.log('✅ 사이트 데이터 캐시 히트');
+    return dataCache.sites.data;
+  }
+  
+  // 2. Supabase 데이터 시도 (성능 최적화된 쿼리)
   if (isSupabaseConnected) {
     try {
+      const queryId = `fetch-sites-${Date.now()}`;
+      performanceMonitor.startQuery(queryId, 'SELECT sites optimized');
+      
       const { data, error } = await supabase
         .from('sites')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select(optimizedQueryBuilder.buildSelectClause('sites'))
+        .order('created_at', { ascending: false })
+        .limit(200);
+        
+      performanceMonitor.endQuery(queryId);
 
       if (!error && data) {
-        console.log('✅ Supabase에서 사이트 데이터 로드:', data.length + '개');
+        // 캐시 업데이트
+        dataCache.sites = {
+          data: data,
+          timestamp: Date.now(),
+          ttl: 300000
+        };
+        console.log(`✅ Supabase에서 사이트 데이터 로드: ${data.length}개 (캐시 저장)`);
         return data;
       }
     } catch (err) {
-      console.warn('⚠️ Supabase 사이트 로드 실패:', err);
+      console.warn('⚠️ Supabase 사이트 로드 실패:', err.message);
     }
   }
 
-  // localStorage 폴백
+  // 3. localStorage 폴백
   try {
     const adminSites = localStorage.getItem('adminSites');
-    return adminSites ? JSON.parse(adminSites) : defaultStockSites;
+    const fallbackData = adminSites ? JSON.parse(adminSites) : defaultStockSites;
+    
+    // localStorage 데이터도 짧은 시간 캐시
+    dataCache.sites = {
+      data: fallbackData,
+      timestamp: Date.now(),
+      ttl: 60000 // localStorage는 1분 TTL
+    };
+    
+    return fallbackData;
   } catch (error) {
-    console.warn('Failed to load admin sites:', error);
+    console.warn('Failed to load admin sites:', error.message);
     return defaultStockSites;
   }
 };
 
 export const getYoutubeChannels = async () => {
-  // Supabase에서 데이터 시도
+  // 1. 캐시 확인
+  if (isCacheValid(dataCache.channels)) {
+    console.log('✅ 유튜브 채널 데이터 캐시 히트');
+    return dataCache.channels.data;
+  }
+  
+  // 2. Supabase 데이터 시도
   if (isSupabaseConnected) {
     try {
+      const queryId = `fetch-channels-${Date.now()}`;
+      performanceMonitor.startQuery(queryId, 'SELECT youtube_channels optimized');
+      
       const { data, error } = await supabase
         .from('youtube_channels')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select(optimizedQueryBuilder.buildSelectClause('youtube_channels'))
+        .order('created_at', { ascending: false })
+        .limit(100);
+        
+      performanceMonitor.endQuery(queryId);
 
       if (!error && data) {
-        console.log('✅ Supabase에서 유튜브 채널 데이터 로드:', data.length + '개');
+        dataCache.channels = {
+          data: data,
+          timestamp: Date.now(),
+          ttl: 300000
+        };
+        console.log(`✅ Supabase에서 유튜브 채널 데이터 로드: ${data.length}개 (캐시 저장)`);
         return data;
       }
     } catch (err) {
-      console.warn('⚠️ Supabase 유튜브 채널 로드 실패:', err);
+      console.warn('⚠️ Supabase 유튜브 채널 로드 실패:', err.message);
     }
   }
 
-  // localStorage 폴백
+  // 3. localStorage 폴백
   try {
     const adminChannels = localStorage.getItem('adminChannels');
-    return adminChannels ? JSON.parse(adminChannels) : defaultYoutubeChannels;
+    const fallbackData = adminChannels ? JSON.parse(adminChannels) : defaultYoutubeChannels;
+    
+    dataCache.channels = {
+      data: fallbackData,
+      timestamp: Date.now(),
+      ttl: 60000
+    };
+    
+    return fallbackData;
   } catch (error) {
-    console.warn('Failed to load admin channels:', error);
+    console.warn('Failed to load admin channels:', error.message);
     return defaultYoutubeChannels;
   }
 };
 
 export const getCategories = async (type = 'site') => {
-  // Supabase에서 데이터 시도
+  const cacheKey = type === 'site' ? 'categories' : 'youtubeCategories';
+  
+  // 1. 캐시 확인
+  if (isCacheValid(dataCache[cacheKey])) {
+    console.log(`✅ ${type} 카테고리 데이터 캐시 히트`);
+    return dataCache[cacheKey].data;
+  }
+  
+  // 2. Supabase 데이터 시도
   if (isSupabaseConnected) {
     try {
+      const queryId = `fetch-categories-${type}-${Date.now()}`;
+      performanceMonitor.startQuery(queryId, `SELECT categories WHERE type=${type}`);
+      
       const { data, error } = await supabase
         .from('categories')
         .select('name')
         .eq('type', type)
-        .order('created_at', { ascending: true });
+        .order('name', { ascending: true });
+        
+      performanceMonitor.endQuery(queryId);
 
       if (!error && data) {
         const categoryNames = ['전체', ...data.map(cat => cat.name)];
-        console.log(`✅ Supabase에서 ${type} 카테고리 로드:`, categoryNames.length + '개');
+        
+        dataCache[cacheKey] = {
+          data: categoryNames,
+          timestamp: Date.now(),
+          ttl: 600000 // 카테고리는 오래 캐시
+        };
+        
+        console.log(`✅ Supabase에서 ${type} 카테고리 로드: ${categoryNames.length}개 (캐시 저장)`);
         return categoryNames;
       }
     } catch (err) {
-      console.warn(`⚠️ Supabase ${type} 카테고리 로드 실패:`, err);
+      console.warn(`⚠️ Supabase ${type} 카테고리 로드 실패:`, err.message);
     }
   }
 
-  // localStorage 폴백
+  // 3. localStorage 폴백
   try {
     const storageKey = type === 'site' ? 'adminSiteCategories' : 'adminYtCategories';
     const defaultData = type === 'site' ? defaultCategories : defaultYoutubeCategories;
     const adminCategories = localStorage.getItem(storageKey);
-    return adminCategories ? JSON.parse(adminCategories) : defaultData;
+    const fallbackData = adminCategories ? JSON.parse(adminCategories) : defaultData;
+    
+    dataCache[cacheKey] = {
+      data: fallbackData,
+      timestamp: Date.now(),
+      ttl: 300000
+    };
+    
+    return fallbackData;
   } catch (error) {
-    console.warn(`Failed to load admin ${type} categories:`, error);
+    console.warn(`Failed to load admin ${type} categories:`, error.message);
     return type === 'site' ? defaultCategories : defaultYoutubeCategories;
   }
 };

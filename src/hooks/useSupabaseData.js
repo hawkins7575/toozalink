@@ -1,5 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '../lib/supabase';
+
+// 성능 최적화를 위한 상수
+const FETCH_TIMEOUT = 10000; // 10초 타임아웃
+const RETRY_DELAY = 1000; // 1초 재시도 지연
 
 export const useSupabaseData = () => {
   const [sites, setSites] = useState([]);
@@ -38,37 +42,71 @@ export const useSupabaseData = () => {
     }
   }, []);
 
-  // 사이트 가져오기
-  const fetchSites = useCallback(async () => {
+  // 사이트 가져오기 (성능 최적화)
+  const fetchSites = useCallback(async (retryCount = 0) => {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+      
       const { data, error } = await supabase
         .from('sites')
-        .select('*')
-        .order('created_at', { ascending: false });
-
+        .select(`
+          id, name, url, description, category,
+          tags, tips, difficulty, is_user_submitted,
+          created_at
+        `)
+        .order('created_at', { ascending: false })
+        .limit(200) // 성능을 위한 데이터 제한
+        .abortSignal(controller.signal);
+      
+      clearTimeout(timeoutId);
+      
       if (error) throw error;
       setSites(data || []);
       return data || [];
     } catch (err) {
-      console.error('사이트 로드 실패:', err);
+      // 네트워크 오류 시 재시도
+      if (err.name === 'AbortError' && retryCount < 2) {
+        console.warn(`사이트 로드 재시도 (${retryCount + 1}/2)`);
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+        return fetchSites(retryCount + 1);
+      }
+      
+      console.error('사이트 로드 실패:', err.message);
       setError(err.message);
       return [];
     }
   }, []);
 
-  // 유튜브 채널 가져오기
-  const fetchYoutubeChannels = useCallback(async () => {
+  // 유튜브 채널 가져오기 (성능 최적화)
+  const fetchYoutubeChannels = useCallback(async (retryCount = 0) => {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+      
       const { data, error } = await supabase
         .from('youtube_channels')
-        .select('*')
-        .order('created_at', { ascending: false });
-
+        .select(`
+          id, name, url, category, difficulty,
+          tips, is_user_submitted, created_at
+        `)
+        .order('created_at', { ascending: false })
+        .limit(100) // 성능을 위한 데이터 제한
+        .abortSignal(controller.signal);
+      
+      clearTimeout(timeoutId);
+      
       if (error) throw error;
       setYoutubeChannels(data || []);
       return data || [];
     } catch (err) {
-      console.error('유튜브 채널 로드 실패:', err);
+      if (err.name === 'AbortError' && retryCount < 2) {
+        console.warn(`유튜브 채널 로드 재시도 (${retryCount + 1}/2)`);
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+        return fetchYoutubeChannels(retryCount + 1);
+      }
+      
+      console.error('유튜브 채널 로드 실패:', err.message);
       setError(err.message);
       return [];
     }

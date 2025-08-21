@@ -1,9 +1,13 @@
 const { supabase } = require('./supabase-client');
 
+// 성능 최적화를 위한 헤더
 const headers = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
+  'Access-Control-Allow-Headers': 'Content-Type, Cache-Control',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Cache-Control': 'public, max-age=300, s-maxage=600', // 5분 브라우저, 10분 CDN 캐시
+  'Content-Type': 'application/json; charset=utf-8',
+  'X-Content-Type-Options': 'nosniff'
 };
 
 exports.handler = async (event, context) => {
@@ -21,10 +25,16 @@ exports.handler = async (event, context) => {
 
     switch (httpMethod) {
       case 'GET':
+        // 성능 최적화된 쿼리
         const { data: sites, error } = await supabase
           .from('sites')
-          .select('*')
-          .order('created_at', { ascending: false });
+          .select(`
+            id, name, url, description, category,
+            tags, tips, difficulty, is_user_submitted,
+            created_at
+          `) // 필요한 필드만 선택
+          .order('created_at', { ascending: false })
+          .limit(200); // 데이터 제한
 
         if (error) throw error;
 
@@ -49,10 +59,15 @@ exports.handler = async (event, context) => {
           submitted_by: newSite.submittedBy || 'user'
         };
 
+        // 성능을 위해 필요한 필드만 반환
         const { data, error: insertError } = await supabase
           .from('sites')
           .insert([siteData])
-          .select();
+          .select(`
+            id, name, url, description, category,
+            tags, tips, difficulty, is_user_submitted,
+            created_at
+          `);
 
         if (insertError) throw insertError;
 
