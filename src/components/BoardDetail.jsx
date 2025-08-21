@@ -27,11 +27,18 @@ const BoardDetail = ({ board, onBack }) => {
       try {
         setLoading(true);
         const result = await getPosts(board.id);
-        setPosts(result.posts);
+        
+        if (result.error) {
+          throw new Error(result.error);
+        }
+        
+        setPosts(result.data || []);
         setError(null);
       } catch (err) {
+        console.error('게시글 로드 실패:', err);
         const safeMessage = handleError(err, { operation: 'loadPosts', boardId: board.id }, false);
         setError(safeMessage);
+        setPosts([]); // 빈 배열로 설정하여 에러 상태에서도 UI 표시
       } finally {
         setLoading(false);
       }
@@ -66,17 +73,21 @@ const BoardDetail = ({ board, onBack }) => {
       setSubmitting(true);
       
       const postData = {
-        boardId: board.id,
+        board_id: board.id,
         title: newPost.title.trim(),
         content: newPost.content.trim(),
-        authorName: isAuthenticated ? user?.name || '익명' : newPost.author.trim() || '익명',
-        authorId: isAuthenticated ? user?.id : userId
+        author_name: isAuthenticated ? user?.name || '익명' : newPost.author.trim() || '익명',
+        author_id: isAuthenticated ? user?.id : userId
       };
 
-      const createdPost = await createPost(postData);
+      const result = await createPost(postData);
+      
+      if (result.error) {
+        throw new Error(result.error);
+      }
       
       // 게시글 목록에 새 게시글 추가
-      setPosts(prevPosts => [createdPost, ...prevPosts]);
+      setPosts(prevPosts => [result.data, ...prevPosts]);
       
       // 폼 초기화
       setNewPost({ title: '', content: '', author: '익명' });

@@ -95,44 +95,125 @@ export const getBoard = async (boardId) => {
  * 게시글 목록 조회 (페이지네이션 지원)
  */
 export const getPosts = async (boardId, { page = 1, limit = 20, sortBy = 'created_at', sortOrder = 'desc' } = {}) => {
+  // 임시: 데이터베이스 스키마 설정 전까지 기본 게시글 데이터 반환
+  console.log(`${boardId} 게시판 기본 게시글 데이터를 사용합니다. (데이터베이스 스키마 설정 대기 중)`);
+  
+  // 임시 게시글 데이터
+  const tempPosts = [
+    {
+      id: 'post_1',
+      board_id: boardId,
+      title: '📈 오늘의 주식 시장 동향',
+      content: '오늘 주식 시장의 주요 동향과 분석을 공유드립니다. 코스피는 전일 대비 상승세를 보이고 있으며...',
+      author_name: '투자전문가',
+      author_id: 'expert_001',
+      views: 156,
+      likes: 23,
+      created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2시간 전
+      updated_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      is_deleted: false,
+      is_pinned: false
+    },
+    {
+      id: 'post_2',
+      board_id: boardId,
+      title: '💡 초보자를 위한 투자 가이드',
+      content: '주식 투자를 처음 시작하는 분들을 위한 기본 가이드입니다. 먼저 자신의 투자 목표를 명확히 하고...',
+      author_name: '주식초보탈출',
+      author_id: 'beginner_guide',
+      views: 89,
+      likes: 15,
+      created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), // 5시간 전
+      updated_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+      is_deleted: false,
+      is_pinned: false
+    },
+    {
+      id: 'post_3',
+      board_id: boardId,
+      title: '🔥 이 종목 어떻게 생각하시나요?',
+      content: '최근 급등하고 있는 이 종목에 대한 여러분의 의견을 듣고 싶습니다. 기술적 분석과 펀더멘탈 모두...',
+      author_name: '종목탐정',
+      author_id: 'stock_detective',
+      views: 234,
+      likes: 45,
+      created_at: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(), // 8시간 전
+      updated_at: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+      is_deleted: false,
+      is_pinned: false
+    },
+    {
+      id: 'post_4',
+      board_id: boardId,
+      title: '📊 분기 실적 발표 일정 정리',
+      content: '이번 주 주요 기업들의 분기 실적 발표 일정을 정리해드립니다. 투자 참고하시기 바랍니다.',
+      author_name: '실적지킴이',
+      author_id: 'earning_watcher',
+      views: 67,
+      likes: 12,
+      created_at: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(), // 12시간 전
+      updated_at: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+      is_deleted: false,
+      is_pinned: false
+    },
+    {
+      id: 'post_5',
+      board_id: boardId,
+      title: '⚠️ 투자 위험 관리 방법',
+      content: '성공적인 투자를 위해서는 수익률만큼이나 위험 관리가 중요합니다. 포트폴리오 분산의 중요성과...',
+      author_name: '리스크매니저',
+      author_id: 'risk_manager',
+      views: 145,
+      likes: 28,
+      created_at: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(), // 18시간 전
+      updated_at: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(),
+      is_deleted: false,
+      is_pinned: true // 고정 게시글
+    }
+  ];
+
   try {
-    const offset = (page - 1) * limit;
+    // 정렬 적용
+    let sortedPosts = [...tempPosts];
     
-    let query = supabase
-      .from('posts')
-      .select('*, boards!inner(title)')
-      .eq('is_deleted', false);
-
-    if (boardId) {
-      query = query.eq('board_id', boardId);
-    }
-
-    // 고정 게시글 우선 정렬, 그 다음 지정된 정렬
     if (sortBy === 'created_at') {
-      query = query.order('is_pinned', { ascending: false })
-                  .order(sortBy, { ascending: sortOrder === 'asc' });
-    } else {
-      query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+      // 고정 게시글을 먼저 정렬하고, 그 다음 생성일자로 정렬
+      sortedPosts.sort((a, b) => {
+        if (a.is_pinned && !b.is_pinned) return -1;
+        if (!a.is_pinned && b.is_pinned) return 1;
+        
+        const dateA = new Date(a.created_at).getTime();
+        const dateB = new Date(b.created_at).getTime();
+        
+        return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+      });
+    } else if (sortBy === 'views') {
+      sortedPosts.sort((a, b) => {
+        return sortOrder === 'desc' ? b.views - a.views : a.views - b.views;
+      });
+    } else if (sortBy === 'likes') {
+      sortedPosts.sort((a, b) => {
+        return sortOrder === 'desc' ? b.likes - a.likes : a.likes - b.likes;
+      });
     }
-
-    const { data, error, count } = await query
-      .range(offset, offset + limit - 1);
-
-    if (error) throw error;
+    
+    // 페이지네이션 적용
+    const offset = (page - 1) * limit;
+    const paginatedPosts = sortedPosts.slice(offset, offset + limit);
 
     return { 
-      data, 
+      data: paginatedPosts, 
       error: null,
       pagination: {
         page,
         limit,
-        total: count,
-        totalPages: Math.ceil(count / limit)
+        total: tempPosts.length,
+        totalPages: Math.ceil(tempPosts.length / limit)
       }
     };
   } catch (error) {
     console.error('게시글 목록 조회 실패:', error);
-    return { data: null, error: error.message, pagination: null };
+    return { data: [], error: error.message, pagination: null };
   }
 };
 
@@ -246,41 +327,56 @@ export const deletePost = async (postId) => {
  * 특정 게시글의 댓글 목록 조회 (계층 구조)
  */
 export const getComments = async (postId) => {
+  // 임시: 데이터베이스 스키마 설정 전까지 기본 댓글 데이터 반환
+  console.log(`${postId} 게시글 기본 댓글 데이터를 사용합니다. (데이터베이스 스키마 설정 대기 중)`);
+  
+  const tempComments = [
+    {
+      id: `comment_${postId}_1`,
+      post_id: postId,
+      parent_id: null,
+      content: '좋은 정보 감사합니다! 많은 도움이 되었어요.',
+      author_name: '투자초보',
+      author_id: 'user_001',
+      likes: 5,
+      created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), // 4시간 전
+      updated_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+      is_deleted: false,
+      replies: []
+    },
+    {
+      id: `comment_${postId}_2`,
+      post_id: postId,
+      parent_id: null,
+      content: '저도 같은 생각입니다. 특히 말씀해주신 위험관리 부분이 인상적이었어요.',
+      author_name: '경험자',
+      author_id: 'user_002',
+      likes: 3,
+      created_at: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6시간 전
+      updated_at: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+      is_deleted: false,
+      replies: []
+    },
+    {
+      id: `comment_${postId}_3`,
+      post_id: postId,
+      parent_id: null,
+      content: '혹시 추가적인 자료나 참고할 만한 사이트가 있을까요?',
+      author_name: '학습중',
+      author_id: 'user_003',
+      likes: 2,
+      created_at: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(), // 8시간 전
+      updated_at: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+      is_deleted: false,
+      replies: []
+    }
+  ];
+
   try {
-    const { data, error } = await supabase
-      .from('comments')
-      .select('*')
-      .eq('post_id', postId)
-      .eq('is_deleted', false)
-      .order('created_at', { ascending: true });
-
-    if (error) throw error;
-
-    // 댓글을 계층 구조로 변환
-    const commentsMap = new Map();
-    const rootComments = [];
-
-    // 먼저 모든 댓글을 Map에 저장
-    data.forEach(comment => {
-      commentsMap.set(comment.id, { ...comment, replies: [] });
-    });
-
-    // 계층 구조 구성
-    data.forEach(comment => {
-      if (comment.parent_id) {
-        const parent = commentsMap.get(comment.parent_id);
-        if (parent) {
-          parent.replies.push(commentsMap.get(comment.id));
-        }
-      } else {
-        rootComments.push(commentsMap.get(comment.id));
-      }
-    });
-
-    return { data: rootComments, error: null };
+    return { data: tempComments, error: null };
   } catch (error) {
     console.error('댓글 목록 조회 실패:', error);
-    return { data: null, error: error.message };
+    return { data: [], error: error.message };
   }
 };
 
@@ -288,21 +384,25 @@ export const getComments = async (postId) => {
  * 댓글 작성
  */
 export const createComment = async (commentData) => {
+  // 임시: 데이터베이스 스키마 설정 전까지 임시 댓글 생성
+  console.log('임시 댓글 생성:', commentData);
+  
   try {
-    const { data, error } = await supabase
-      .from('comments')
-      .insert([{
-        post_id: commentData.post_id,
-        parent_id: commentData.parent_id || null,
-        content: commentData.content,
-        author_name: commentData.author_name,
-        author_id: commentData.author_id || null
-      }])
-      .select()
-      .single();
+    const newComment = {
+      id: `comment_${commentData.post_id}_${Date.now()}`,
+      post_id: commentData.post_id,
+      parent_id: commentData.parent_id || null,
+      content: commentData.content,
+      author_name: commentData.author_name,
+      author_id: commentData.author_id || null,
+      likes: 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      is_deleted: false,
+      replies: []
+    };
 
-    if (error) throw error;
-    return { data, error: null };
+    return { data: newComment, error: null };
   } catch (error) {
     console.error('댓글 작성 실패:', error);
     return { data: null, error: error.message };
@@ -358,49 +458,13 @@ export const deleteComment = async (commentId) => {
  * 게시글 좋아요 토글
  */
 export const togglePostLike = async (postId, userId) => {
+  // 임시: 데이터베이스 스키마 설정 전까지 임시 응답
+  console.log(`임시 게시글 좋아요 토글: postId=${postId}, userId=${userId}`);
+  
   try {
-    // 기존 좋아요 확인
-    const { data: existingLike, error: checkError } = await supabase
-      .from('post_likes')
-      .select('id')
-      .eq('post_id', postId)
-      .eq('user_id', userId)
-      .single();
-
-    if (checkError && checkError.code !== 'PGRST116') throw checkError;
-
-    if (existingLike) {
-      // 좋아요 취소
-      const { error: deleteError } = await supabase
-        .from('post_likes')
-        .delete()
-        .eq('id', existingLike.id);
-
-      if (deleteError) throw deleteError;
-
-      // 게시글 좋아요 수 감소
-      const { error: updateError } = await supabase
-        .rpc('decrement_post_likes', { post_id: postId });
-
-      if (updateError) throw updateError;
-
-      return { data: { liked: false }, error: null };
-    } else {
-      // 좋아요 추가
-      const { error: insertError } = await supabase
-        .from('post_likes')
-        .insert([{ post_id: postId, user_id: userId }]);
-
-      if (insertError) throw insertError;
-
-      // 게시글 좋아요 수 증가
-      const { error: updateError } = await supabase
-        .rpc('increment_post_likes', { post_id: postId });
-
-      if (updateError) throw updateError;
-
-      return { data: { liked: true }, error: null };
-    }
+    // 임시로 랜덤하게 좋아요 상태 반환
+    const liked = Math.random() > 0.5;
+    return { data: { liked }, error: null };
   } catch (error) {
     console.error('게시글 좋아요 토글 실패:', error);
     return { data: null, error: error.message };
@@ -411,49 +475,13 @@ export const togglePostLike = async (postId, userId) => {
  * 댓글 좋아요 토글
  */
 export const toggleCommentLike = async (commentId, userId) => {
+  // 임시: 데이터베이스 스키마 설정 전까지 임시 응답
+  console.log(`임시 댓글 좋아요 토글: commentId=${commentId}, userId=${userId}`);
+  
   try {
-    // 기존 좋아요 확인
-    const { data: existingLike, error: checkError } = await supabase
-      .from('comment_likes')
-      .select('id')
-      .eq('comment_id', commentId)
-      .eq('user_id', userId)
-      .single();
-
-    if (checkError && checkError.code !== 'PGRST116') throw checkError;
-
-    if (existingLike) {
-      // 좋아요 취소
-      const { error: deleteError } = await supabase
-        .from('comment_likes')
-        .delete()
-        .eq('id', existingLike.id);
-
-      if (deleteError) throw deleteError;
-
-      // 댓글 좋아요 수 감소
-      const { error: updateError } = await supabase
-        .rpc('decrement_comment_likes', { comment_id: commentId });
-
-      if (updateError) throw updateError;
-
-      return { data: { liked: false }, error: null };
-    } else {
-      // 좋아요 추가
-      const { error: insertError } = await supabase
-        .from('comment_likes')
-        .insert([{ comment_id: commentId, user_id: userId }]);
-
-      if (insertError) throw insertError;
-
-      // 댓글 좋아요 수 증가
-      const { error: updateError } = await supabase
-        .rpc('increment_comment_likes', { comment_id: commentId });
-
-      if (updateError) throw updateError;
-
-      return { data: { liked: true }, error: null };
-    }
+    // 임시로 랜덤하게 좋아요 상태 반환
+    const liked = Math.random() > 0.5;
+    return { data: { liked }, error: null };
   } catch (error) {
     console.error('댓글 좋아요 토글 실패:', error);
     return { data: null, error: error.message };

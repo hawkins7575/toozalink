@@ -3,8 +3,7 @@ import {
   getComments, 
   createComment, 
   togglePostLike, 
-  toggleCommentLike, 
-  generateUserId 
+  toggleCommentLike
 } from '../lib/boardApi';
 import useAuth from '../hooks/useAuth';
 import { useErrorHandler } from '../utils/errorHandler';
@@ -34,8 +33,11 @@ const PostDetail = ({ post, board, onBack }) => {
         addToHistory(post.id, board.id);
         
         // 댓글 로드
-        const commentsData = await getComments(post.id);
-        setComments(commentsData);
+        const result = await getComments(post.id);
+        if (result.error) {
+          throw new Error(result.error);
+        }
+        setComments(result.data || []);
       } catch (error) {
         handleError(error, { operation: 'loadComments', postId: post.id }, false);
       } finally {
@@ -54,9 +56,15 @@ const PostDetail = ({ post, board, onBack }) => {
     
     try {
       setLikingPost(true);
-      const newLikeCount = await togglePostLike(post.id, userId);
-      setLikeCount(newLikeCount);
+      const result = await togglePostLike(post.id, userId);
+      
+      if (result.error) {
+        throw new Error(result.error);
+      }
+      
+      // 임시: 좋아요 상태만 토글 (실제 DB 연동 시 서버 응답 사용)
       setIsLiked(!isLiked);
+      setLikeCount(prevCount => isLiked ? prevCount - 1 : prevCount + 1);
     } catch (error) {
       handleError(error, { operation: 'togglePostLike', postId: post.id });
     } finally {
@@ -77,14 +85,17 @@ const PostDetail = ({ post, board, onBack }) => {
       setSubmittingComment(true);
       
       const commentData = {
-        postId: post.id,
+        post_id: post.id,
         content: newComment.content.trim(),
-        authorName: isAuthenticated ? user?.name || '익명' : newComment.author.trim() || '익명',
-        authorId: isAuthenticated ? user?.id : userId
+        author_name: isAuthenticated ? user?.name || '익명' : newComment.author.trim() || '익명',
+        author_id: isAuthenticated ? user?.id : userId
       };
 
-      const createdComment = await createComment(commentData);
-      setComments(prevComments => [...prevComments, createdComment]);
+      const result = await createComment(commentData);
+      if (result.error) {
+        throw new Error(result.error);
+      }
+      setComments(prevComments => [...prevComments, result.data]);
       setNewComment({ author: '익명', content: '' });
       
     } catch (error) {
@@ -97,14 +108,17 @@ const PostDetail = ({ post, board, onBack }) => {
   // 댓글 좋아요 토글
   const handleCommentLike = async (commentId) => {
     try {
-      const userId = generateUserId();
-      const newLikeCount = await toggleCommentLike(commentId, userId);
+      const result = await toggleCommentLike(commentId, userId);
       
-      // 댓글 목록에서 해당 댓글의 좋아요 수 업데이트
+      if (result.error) {
+        throw new Error(result.error);
+      }
+      
+      // 임시: 댓글 좋아요 수만 증가 (실제 DB 연동 시 서버 응답 사용)
       setComments(prevComments => 
         prevComments.map(comment => 
           comment.id === commentId 
-            ? { ...comment, likes: newLikeCount }
+            ? { ...comment, likes: (comment.likes || 0) + 1 }
             : comment
         )
       );
