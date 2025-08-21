@@ -9,7 +9,7 @@ import Register from "./components/Register";
 import UserProfile from "./components/UserProfile";
 import FourSectionLayout from "./components/FourSectionLayout";
 import InvestmentMasters from "./components/InvestmentMasters";
-import BoardSelector from "./components/BoardSelector";
+// import BoardSelector from "./components/BoardSelector"; // 게시판 기능 제거됨
 import MobileHeader from "./components/MobileHeader";
 import useUserSubmissions from "./hooks/useUserSubmissions";
 import useAuth from "./hooks/useAuth";
@@ -264,15 +264,7 @@ function App() {
                   <span className="sidebar-icon" aria-hidden="true">📺</span>
                   <span className="sidebar-text">유튜브 채널</span>
                 </button>
-                <button 
-                  className={`sidebar-btn ${currentView === "boards" ? 'active' : ''}`}
-                  onClick={() => setCurrentView("boards")}
-                  aria-current={currentView === "boards" ? "page" : undefined}
-                  aria-label="주식게시판으로 이동"
-                >
-                  <span className="sidebar-icon" aria-hidden="true">💬</span>
-                  <span className="sidebar-text">주식게시판</span>
-                </button>
+                {/* 게시판 기능 제거됨 */}
                 <button 
                   className={`sidebar-btn ${currentView === "masters" ? 'active' : ''}`}
                   onClick={() => setCurrentView("masters")}
@@ -350,7 +342,9 @@ function App() {
             ) : currentView === "youtube" ? (
               <YoutubeSection />
             ) : currentView === "boards" ? (
-              <BoardSelector />
+              <div style={{padding: '20px', textAlign: 'center'}}>
+                <p>게시판 기능이 제거되었습니다.</p>
+              </div>
             ) : currentView === "masters" ? (
               <InvestmentMasters />
             ) : currentView === "profile" ? (
