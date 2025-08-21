@@ -46,19 +46,86 @@ const FourSectionLayout = ({ favorites, onToggleFavorite, onSiteClick }) => {
     return stockSites.filter(site => site.category === categoryName);
   };
 
-  // 카테고리별 색상 및 아이콘 매핑
-  const getCategoryColor = (category) => {
-    const colorMap = {
-      '증권사': 'blue',
-      '뉴스/정보': 'green',
-      '분석/데이터': 'purple', 
-      '커뮤니티': 'orange',
-      '투자정보': 'blue',
-      '뉴스': 'green',
-      '분석도구': 'purple',
-      '교육': 'yellow'
+  // 카테고리별 색상, 아이콘, 부제목 매핑
+  const getCategoryInfo = (category) => {
+    const infoMap = {
+      '증권사': { 
+        color: 'blue', 
+        icon: '🏢', 
+        subtitle: '증권계좌 개설과 매매 서비스' 
+      },
+      '뉴스/정보': { 
+        color: 'green', 
+        icon: '📰', 
+        subtitle: '실시간 주식뉴스와 시장정보' 
+      },
+      '분석/데이터': { 
+        color: 'purple', 
+        icon: '📊', 
+        subtitle: '차트분석과 투자데이터' 
+      },
+      '커뮤니티': { 
+        color: 'orange', 
+        icon: '💬', 
+        subtitle: '투자자들의 소통공간' 
+      },
+      '투자정보': { 
+        color: 'blue', 
+        icon: '💰', 
+        subtitle: '투자전략과 종목정보' 
+      },
+      '뉴스': { 
+        color: 'green', 
+        icon: '📺', 
+        subtitle: '경제뉴스와 시장동향' 
+      },
+      '분석도구': { 
+        color: 'purple', 
+        icon: '🔍', 
+        subtitle: '투자분석 도구와 지표' 
+      },
+      '교육': { 
+        color: 'yellow', 
+        icon: '🎓', 
+        subtitle: '투자교육과 학습자료' 
+      },
+      '공식거래소': { 
+        color: 'blue', 
+        icon: '🏛️', 
+        subtitle: '공식 주식거래소' 
+      },
+      '포털사이트': { 
+        color: 'green', 
+        icon: '🌐', 
+        subtitle: '종합 금융정보 포털' 
+      },
+      '정부기관': { 
+        color: 'purple', 
+        icon: '🏛️', 
+        subtitle: '정부 금융감독기관' 
+      },
+      '금융서비스': { 
+        color: 'orange', 
+        icon: '💳', 
+        subtitle: '종합 금융서비스' 
+      },
+      '글로벌포털': { 
+        color: 'blue', 
+        icon: '🌍', 
+        subtitle: '해외 금융정보 포털' 
+      },
+      '공공데이터': { 
+        color: 'green', 
+        icon: '📈', 
+        subtitle: '공공 투자데이터' 
+      },
+      '금융정보포털': { 
+        color: 'purple', 
+        icon: '📋', 
+        subtitle: '금융정보 종합포털' 
+      }
     };
-    return colorMap[category] || 'blue';
+    return infoMap[category] || { color: 'blue', icon: '📊', subtitle: '투자 관련 서비스' };
   };
 
   // 영어 카테고리를 한글로 변환
@@ -100,12 +167,18 @@ const FourSectionLayout = ({ favorites, onToggleFavorite, onSiteClick }) => {
   // 동적으로 섹션 생성
   const sections = categories
     .filter(category => category !== '전체')
-    .map((category) => ({
-      id: category.toLowerCase().replace(/[^a-z0-9]/g, ''),
-      title: getCategoryKoreanTitle(category),
-      color: getCategoryColor(category),
-      sites: getSitesByCategory(category)
-    }));
+    .map((category) => {
+      const categoryInfo = getCategoryInfo(category);
+      const sites = getSitesByCategory(category);
+      return {
+        id: category.toLowerCase().replace(/[^a-z0-9]/g, ''),
+        title: getCategoryKoreanTitle(category),
+        subtitle: categoryInfo.subtitle,
+        icon: categoryInfo.icon,
+        color: categoryInfo.color,
+        sites: sites
+      };
+    });
 
   const handleSiteClick = (site) => {
     onSiteClick(site.id);
@@ -114,13 +187,24 @@ const FourSectionLayout = ({ favorites, onToggleFavorite, onSiteClick }) => {
 
   return (
     <div className="four-section-layout">
-      {/* 동적 섹션 그리드 */}
+      {/* 헤더 */}
+      <div className="layout-header">
+        <h1>주식 투자 사이트</h1>
+        <p>신뢰할 수 있는 주식 투자 사이트들을 카테고리별로 만나보세요</p>
+      </div>
+
+      {/* 섹션 그리드 */}
       <div className="sections-grid">
         {sections.length > 0 ? sections.map((section) => (
           <div key={section.id} className={`section-card ${section.color}`}>
             <div className="section-header">
+              <div className="section-icon">{section.icon}</div>
               <div className="section-info">
                 <h3>{section.title}</h3>
+                <p>{section.subtitle}</p>
+              </div>
+              <div className="section-count">
+                {section.sites.length}
               </div>
             </div>
             
