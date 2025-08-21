@@ -7,6 +7,21 @@
   NODE_VERSION = "18"
   CI = "false"
 
+# 빌드 최적화 설정
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+[build.processing.html]
+  pretty_urls = true
+
 # 커스텀 도메인 최적화 설정
 [context.production]
   command = "npm run build"
@@ -90,8 +105,6 @@
   [headers.values]
     # 커스텀 도메인 연결 최적화
     Connection = "keep-alive"
-    # GZIP 압축 강제 활성화
-    Content-Encoding = "gzip"
 
 [functions]
   node_bundler = "esbuild"

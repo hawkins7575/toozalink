@@ -15,14 +15,7 @@ import useUserSubmissions from "./hooks/useUserSubmissions";
 import useAuth from "./hooks/useAuth";
 // import { useSupabaseData } from "./hooks/useSupabaseData"; // 나중에 사용 예정
 import { testConnection } from "./lib/supabase";
-import "./styles.css";
-import "./styles-new.css";
-import "./styles-category-box.css";
-import "./styles-youtube-category.css";
-import "./styles-four-section.css";
-import "./modal-styles.css";
-import "./styles-mobile-optimized.css";
-import "./styles-favicon.css";
+import "./styles-consolidated.css";
 
 function App() {
   console.log('🚀 App component 로드됨');
@@ -92,7 +85,7 @@ function App() {
     );
   }, []);
 
-  // Supabase 연결 테스트
+  // Supabase 연결 지연 로딩 (3초 후 백그라운드에서 실행)
   useEffect(() => {
     const initializeDatabase = async () => {
       try {
@@ -104,8 +97,8 @@ function App() {
       }
     };
 
-    // 타이머로 안전하게 실행
-    const timer = setTimeout(initializeDatabase, 100);
+    // 3초 지연으로 백그라운드 실행 (초기 렌더링 우선)
+    const timer = setTimeout(initializeDatabase, 3000);
     return () => clearTimeout(timer);
   }, []);
 

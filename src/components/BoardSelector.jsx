@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import BoardDetail from './BoardDetail';
 import { getBoards, getBoardStats } from '../lib/boardApi';
 import { useErrorHandler } from '../utils/errorHandler';
-import '../styles-boards.css';
+// styles-boards.css는 styles-consolidated.css에 포함됨
 
 const BoardSelector = () => {
   const { handleError } = useErrorHandler();

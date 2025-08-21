@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import investmentMasters from '../data/investmentMasters.js';
-import '../styles-investment-masters.css';
+// styles-investment-masters.css는 styles-consolidated.css에 포함됨
 
 const InvestmentMasters = () => {
   const [selectedMaster, setSelectedMaster] = useState(null);
