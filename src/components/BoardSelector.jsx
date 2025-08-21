@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import BoardDetail from './BoardDetail';
 import { getBoards, getBoardStats } from '../lib/boardApi';
+import { useErrorHandler } from '../utils/errorHandler';
 import '../styles-boards.css';
 
 const BoardSelector = () => {
+  const { handleError } = useErrorHandler();
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [boards, setBoards] = useState([]);
   const [boardStats, setBoardStats] = useState({});
@@ -13,30 +15,59 @@ const BoardSelector = () => {
   // 게시판 목록 로드
   useEffect(() => {
     const loadBoards = async () => {
+      const timeout = setTimeout(() => {
+        console.warn('게시판 로딩이 10초를 초과했습니다. 기본 데이터를 사용합니다.');
+        setBoards([
+          { id: 'board1', title: '종합 토론 게시판', description: '주식 투자 관련 자유로운 토론을 나눠보세요', icon: '💬', color: '#3b82f6' },
+          { id: 'board2', title: '종목 분석 게시판', description: '개별 종목에 대한 분석과 의견을 공유하세요', icon: '📊', color: '#10b981' },
+          { id: 'board3', title: '투자 정보 게시판', description: '유용한 투자 정보와 뉴스를 공유하세요', icon: '📈', color: '#8b5cf6' },
+          { id: 'board4', title: '질문답변 게시판', description: '투자 관련 궁금한 점을 질문하고 답변을 받아보세요', icon: '❓', color: '#f59e0b' },
+          { id: 'board5', title: '수익인증 게시판', description: '투자 수익을 인증하고 경험담을 공유하세요', icon: '💰', color: '#ef4444' },
+          { id: 'board6', title: '자료실 게시판', description: '투자 관련 유용한 자료와 도구를 공유하세요', icon: '📚', color: '#06b6d4' }
+        ]);
+        setBoardStats({});
+        setLoading(false);
+      }, 10000);
+
       try {
         setLoading(true);
+        console.log('게시판 데이터 로딩 시작...');
+        
         const boardsData = await getBoards();
+        clearTimeout(timeout);
+        console.log('게시판 데이터:', boardsData);
         setBoards(boardsData);
         
-        // 각 게시판의 통계 정보 로드
+        // 각 게시판의 통계 정보 로드 (비동기 병렬 처리)
         const stats = {};
-        for (const board of boardsData) {
-          const boardStat = await getBoardStats(board.id);
-          stats[board.id] = boardStat;
-        }
+        const statPromises = boardsData.map(async (board) => {
+          try {
+            const boardStat = await getBoardStats(board.id);
+            stats[board.id] = boardStat;
+          } catch (statError) {
+            console.warn(`게시판 ${board.id} 통계 로드 실패:`, statError);
+            stats[board.id] = { totalPosts: 0, totalViews: 0, totalLikes: 0, lastPost: null };
+          }
+        });
+        
+        // 모든 통계 요청 완료 대기 (최대 5초)
+        await Promise.allSettled(statPromises);
         setBoardStats(stats);
         
         setError(null);
+        console.log('게시판 데이터 로딩 완료');
       } catch (err) {
-        console.error('게시판 로드 실패:', err);
-        setError('게시판을 불러오는데 실패했습니다.');
+        clearTimeout(timeout);
+        console.error('게시판 로딩 에러:', err);
+        const safeMessage = handleError(err, { operation: 'loadBoards' }, false);
+        setError(safeMessage);
       } finally {
         setLoading(false);
       }
     };
 
     loadBoards();
-  }, []);
+  }, [handleError]);
 
   const handleBoardSelect = (board) => {
     setSelectedBoard(board);

@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PostDetail from './PostDetail';
-import { getPosts, createPost, generateUserId } from '../lib/boardApi';
+import { getPosts, createPost } from '../lib/boardApi';
 import useAuth from '../hooks/useAuth';
+import { useErrorHandler } from '../utils/errorHandler';
+import { useSession } from '../utils/sessionManager';
 
 const BoardDetail = ({ board, onBack }) => {
   const { user, isAuthenticated } = useAuth();
+  const { handleError } = useErrorHandler();
+  const { userId } = useSession();
   const [selectedPost, setSelectedPost] = useState(null);
   const [showNewPostForm, setShowNewPostForm] = useState(false);
   const [posts, setPosts] = useState([]);
@@ -26,8 +30,8 @@ const BoardDetail = ({ board, onBack }) => {
         setPosts(result.posts);
         setError(null);
       } catch (err) {
-        console.error('게시글 로드 실패:', err);
-        setError('게시글을 불러오는데 실패했습니다.');
+        const safeMessage = handleError(err, { operation: 'loadPosts', boardId: board.id }, false);
+        setError(safeMessage);
       } finally {
         setLoading(false);
       }
@@ -36,19 +40,19 @@ const BoardDetail = ({ board, onBack }) => {
     if (board?.id) {
       loadPosts();
     }
-  }, [board?.id]);
+  }, [board?.id, handleError]);
 
-  const handlePostClick = (post) => {
+  const handlePostClick = useCallback((post) => {
     setSelectedPost(post);
-  };
+  }, []);
 
-  const handleBackToBoard = () => {
+  const handleBackToBoard = useCallback(() => {
     setSelectedPost(null);
-  };
+  }, []);
 
-  const handleNewPost = () => {
+  const handleNewPost = useCallback(() => {
     setShowNewPostForm(true);
-  };
+  }, []);
 
   const handleSubmitPost = async (e) => {
     e.preventDefault();
@@ -60,7 +64,6 @@ const BoardDetail = ({ board, onBack }) => {
 
     try {
       setSubmitting(true);
-      const userId = generateUserId();
       
       const postData = {
         boardId: board.id,
@@ -81,17 +84,16 @@ const BoardDetail = ({ board, onBack }) => {
       
       alert('게시글이 성공적으로 작성되었습니다!');
     } catch (err) {
-      console.error('게시글 작성 실패:', err);
-      alert('게시글 작성에 실패했습니다. 다시 시도해주세요.');
+      handleError(err, { operation: 'createPost', boardId: board.id });
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleCancelPost = () => {
+  const handleCancelPost = useCallback(() => {
     setNewPost({ title: '', content: '', author: '익명' });
     setShowNewPostForm(false);
-  };
+  }, []);
 
   // 게시글 상세보기 화면
   if (selectedPost) {
@@ -204,30 +206,11 @@ const BoardDetail = ({ board, onBack }) => {
           </div>
         ) : posts.length > 0 ? (
           posts.map((post) => (
-            <div 
-              key={post.id} 
-              className="post-item"
-              onClick={() => handlePostClick(post)}
-            >
-              <div className="post-main">
-                <h3 className="post-title">{post.title}</h3>
-                <p className="post-preview">
-                  {post.content.length > 100 
-                    ? post.content.substring(0, 100) + '...' 
-                    : post.content}
-                </p>
-                
-                <div className="post-meta">
-                  <span className="post-author">👤 {post.author_name}</span>
-                  <span className="post-date">📅 {new Date(post.created_at).toLocaleDateString('ko-KR')}</span>
-                  <span className="post-stats">
-                    👁️ {post.views} | 👍 {post.likes}
-                  </span>
-                </div>
-              </div>
-
-              <div className="post-arrow">→</div>
-            </div>
+            <PostItem 
+              key={post.id}
+              post={post}
+              onPostClick={handlePostClick}
+            />
           ))
         ) : (
           <div className="empty-posts">
@@ -239,5 +222,46 @@ const BoardDetail = ({ board, onBack }) => {
     </div>
   );
 };
+
+// 성능 최적화를 위한 PostItem 컴포넌트 (React.memo 사용)
+const PostItem = React.memo(({ post, onPostClick }) => {
+  const handleClick = React.useCallback(() => {
+    onPostClick(post);
+  }, [post, onPostClick]);
+
+  const formatDate = React.useMemo(() => {
+    return new Date(post.created_at).toLocaleDateString('ko-KR');
+  }, [post.created_at]);
+
+  const previewContent = React.useMemo(() => {
+    return post.content.length > 100 
+      ? post.content.substring(0, 100) + '...' 
+      : post.content;
+  }, [post.content]);
+
+  return (
+    <div 
+      className="post-item"
+      onClick={handleClick}
+    >
+      <div className="post-main">
+        <h3 className="post-title">{post.title}</h3>
+        <p className="post-preview">{previewContent}</p>
+        
+        <div className="post-meta">
+          <span className="post-author">👤 {post.author_name}</span>
+          <span className="post-date">📅 {formatDate}</span>
+          <span className="post-stats">
+            👁️ {post.views} | 👍 {post.likes}
+          </span>
+        </div>
+      </div>
+
+      <div className="post-arrow">→</div>
+    </div>
+  );
+});
+
+PostItem.displayName = 'PostItem';
 
 export default BoardDetail;

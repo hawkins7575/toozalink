@@ -10,8 +10,8 @@ const AdminLogin = ({ onAdminLogin, onClose }) => {
 
   // 관리자 계정 정보 (실제 운영에서는 서버에서 관리해야 함)
   const ADMIN_CREDENTIALS = {
-    email: 'admin@example.com',
-    password: 'admin123'
+    email: 'daesung75',
+    password: 'wlsl3014'
   };
 
   const handleInputChange = (e) => {
@@ -122,9 +122,9 @@ const AdminLogin = ({ onAdminLogin, onClose }) => {
 
         <div className="admin-login-info">
           <p><strong>관리자 계정 정보:</strong></p>
-          <p>이메일: admin@example.com</p>
-          <p>비밀번호: admin123</p>
-          <small>* 데모용 계정입니다. 실제 운영에서는 보안을 강화해야 합니다.</small>
+          <p>아이디: daesung75</p>
+          <p>비밀번호: wlsl3014</p>
+          <small>* 관리자 전용 계정입니다.</small>
         </div>
       </div>
     </div>

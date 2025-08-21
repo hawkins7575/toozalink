@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   getComments, 
   createComment, 
   togglePostLike, 
   toggleCommentLike, 
-  incrementPostViews,
   generateUserId 
 } from '../lib/boardApi';
 import useAuth from '../hooks/useAuth';
+import { useErrorHandler } from '../utils/errorHandler';
+import { useSession } from '../utils/sessionManager';
 
 const PostDetail = ({ post, board, onBack }) => {
   const { user, isAuthenticated } = useAuth();
+  const { handleError } = useErrorHandler();
+  const { userId, addToHistory } = useSession();
   const [comments, setComments] = useState([]);
   const [commentsLoading, setCommentsLoading] = useState(true);
   const [submittingComment, setSubmittingComment] = useState(false);
@@ -27,44 +30,42 @@ const PostDetail = ({ post, board, onBack }) => {
   useEffect(() => {
     const loadCommentsAndIncrementViews = async () => {
       try {
-        // 조회수 증가
-        await incrementPostViews(post.id);
+        // 조회 이력에 추가
+        addToHistory(post.id, board.id);
         
         // 댓글 로드
         const commentsData = await getComments(post.id);
         setComments(commentsData);
       } catch (error) {
-        console.error('댓글 로드 실패:', error);
+        handleError(error, { operation: 'loadComments', postId: post.id }, false);
       } finally {
         setCommentsLoading(false);
       }
     };
 
-    if (post?.id) {
+    if (post?.id && board?.id) {
       loadCommentsAndIncrementViews();
     }
-  }, [post?.id]);
+  }, [post?.id, board?.id, addToHistory, handleError]);
 
   // 게시글 좋아요 토글
-  const handleLike = async () => {
+  const handleLike = useCallback(async () => {
     if (likingPost) return;
     
     try {
       setLikingPost(true);
-      const userId = generateUserId();
       const newLikeCount = await togglePostLike(post.id, userId);
       setLikeCount(newLikeCount);
       setIsLiked(!isLiked);
     } catch (error) {
-      console.error('좋아요 처리 실패:', error);
-      alert('좋아요 처리에 실패했습니다.');
+      handleError(error, { operation: 'togglePostLike', postId: post.id });
     } finally {
       setLikingPost(false);
     }
-  };
+  }, [likingPost, post.id, isLiked, userId, handleError]);
 
   // 댓글 작성
-  const handleCommentSubmit = async (e) => {
+  const handleCommentSubmit = useCallback(async (e) => {
     e.preventDefault();
     
     if (!newComment.content.trim()) {
@@ -74,7 +75,6 @@ const PostDetail = ({ post, board, onBack }) => {
 
     try {
       setSubmittingComment(true);
-      const userId = generateUserId();
       
       const commentData = {
         postId: post.id,
@@ -88,15 +88,14 @@ const PostDetail = ({ post, board, onBack }) => {
       setNewComment({ author: '익명', content: '' });
       
     } catch (error) {
-      console.error('댓글 작성 실패:', error);
-      alert('댓글 작성에 실패했습니다. 다시 시도해주세요.');
+      handleError(error, { operation: 'createComment', postId: post.id });
     } finally {
       setSubmittingComment(false);
     }
-  };
+  }, [newComment, post.id, isAuthenticated, user, userId, handleError]);
 
   // 댓글 좋아요 토글
-  const handleCommentLike = async (commentId, currentLikes) => {
+  const handleCommentLike = async (commentId) => {
     try {
       const userId = generateUserId();
       const newLikeCount = await toggleCommentLike(commentId, userId);

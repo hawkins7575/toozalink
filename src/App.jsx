@@ -7,8 +7,6 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import UserProfile from "./components/UserProfile";
-import AdminLogin from "./components/AdminLogin";
-import AdminPanel from "./components/AdminPanel";
 import FourSectionLayout from "./components/FourSectionLayout";
 import InvestmentMasters from "./components/InvestmentMasters";
 import BoardSelector from "./components/BoardSelector";
@@ -32,8 +30,7 @@ function App() {
   // const supabaseData = useSupabaseData(); // 나중에 사용 예정
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
-  const [showAdminLogin, setShowAdminLogin] = useState(false);
-  const [showAdminPanel, setShowAdminPanel] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [, setDataVersion] = useState(0); // 데이터 업데이트 트리거
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dbStatus, setDbStatus] = useState('connecting'); // connecting, connected, fallback
@@ -170,25 +167,7 @@ function App() {
     updateUser(userData);
   }, [updateUser]);
 
-  const handleAdminLogin = useCallback((adminData) => {
-    login(adminData);
-    setShowAdminLogin(false);
-    setShowAdminPanel(true);
-  }, [login]);
 
-  const handleAdminLogout = useCallback(() => {
-    logout();
-    setShowAdminPanel(false);
-    setCurrentView('dashboard');
-  }, [logout]);
-
-  const handleDataUpdate = useCallback(() => {
-    // 데이터 버전을 증가시켜 컴포넌트들이 리렌더링되도록 함
-    setDataVersion(prev => prev + 1);
-    
-    // 카테고리 업데이트 이벤트 발생
-    window.dispatchEvent(new CustomEvent('categoryUpdate'));
-  }, []);
 
   // 로딩 중일 때 (Supabase 로딩은 백그라운드에서 진행하고 앱은 바로 시작)
   if (isLoading) {
@@ -321,25 +300,8 @@ function App() {
                       >
                         👤 프로필
                       </button>
-                      {isAdmin ? (
-                        <button 
-                          onClick={() => setShowAdminPanel(true)}
-                          className="sidebar-auth-btn"
-                          title="관리자 패널"
-                        >
-                          ⚙️ 관리자
-                        </button>
-                      ) : (
-                        <button 
-                          onClick={() => setShowAdminLogin(true)}
-                          className="sidebar-auth-btn"
-                          title="관리자 로그인"
-                        >
-                          🔐 관리자
-                        </button>
-                      )}
                       <button 
-                        onClick={isAdmin ? handleAdminLogout : handleLogout}
+                        onClick={handleLogout}
                         className="sidebar-auth-btn logout-btn"
                         title="로그아웃"
                       >
@@ -362,13 +324,6 @@ function App() {
                       title="회원가입"
                     >
                       📝 회원가입
-                    </button>
-                    <button 
-                      onClick={() => setShowAdminLogin(true)}
-                      className="sidebar-auth-btn"
-                      title="관리자 로그인"
-                    >
-                      🔐 관리자
                     </button>
                   </div>
                 )}
@@ -403,7 +358,7 @@ function App() {
             ) : currentView === "profile" ? (
               <UserProfile
                 user={user}
-                onLogout={isAdmin ? handleAdminLogout : handleLogout}
+                onLogout={handleLogout}
                 onUpdateProfile={handleUpdateProfile}
               />
             ) : null}
@@ -422,21 +377,6 @@ function App() {
               type="youtube"
             />
 
-            {/* 관리자 로그인 모달 */}
-            {showAdminLogin && (
-              <AdminLogin 
-                onAdminLogin={handleAdminLogin}
-                onClose={() => setShowAdminLogin(false)}
-              />
-            )}
-
-            {/* 관리자 패널 모달 */}
-            {showAdminPanel && isAdmin && (
-              <AdminPanel 
-                onClose={() => setShowAdminPanel(false)}
-                onDataUpdate={handleDataUpdate}
-              />
-            )}
 
             {/* 로그인 모달 */}
             {showLogin && (
