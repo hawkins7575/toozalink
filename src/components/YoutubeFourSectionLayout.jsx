@@ -25,8 +25,7 @@ const YoutubeFourSectionLayout = ({ allChannels, favorites, onToggleFavorite, on
       subtitle: '전반적인 시장 분석과 투자 전략',
       icon: '📊',
       color: 'blue',
-      channels: comprehensiveChannels,
-      description: '종합적인 시장 분석과 투자 전략을 제공하는 채널들'
+      channels: comprehensiveChannels
     },
     {
       id: 'news',
@@ -34,8 +33,7 @@ const YoutubeFourSectionLayout = ({ allChannels, favorites, onToggleFavorite, on
       subtitle: '실시간 경제 소식과 시장 동향',
       icon: '📺',
       color: 'green',
-      channels: newsChannels,
-      description: '최신 경제 뉴스와 시장 동향을 빠르게 전달하는 채널들'
+      channels: newsChannels
     },
     {
       id: 'analysis',
@@ -43,8 +41,7 @@ const YoutubeFourSectionLayout = ({ allChannels, favorites, onToggleFavorite, on
       subtitle: '차트 분석과 기술적 지표',
       icon: '📈',
       color: 'purple',
-      channels: analysisChannels,
-      description: '차트 분석과 기술적 지표를 활용한 전문 분석 채널들'
+      channels: analysisChannels
     },
     {
       id: 'education',
@@ -52,8 +49,7 @@ const YoutubeFourSectionLayout = ({ allChannels, favorites, onToggleFavorite, on
       subtitle: '투자 기초와 전문 지식',
       icon: '🎓',
       color: 'orange',
-      channels: educationChannels,
-      description: '투자 기초부터 전문 지식까지 체계적인 교육 채널들'
+      channels: educationChannels
     }
   ];
 
@@ -83,9 +79,6 @@ const YoutubeFourSectionLayout = ({ allChannels, favorites, onToggleFavorite, on
               <div className="section-count">
                 {section.channels.length}
               </div>
-            </div>
-            <div className="section-description">
-              {section.description}
             </div>
             
             {/* 각 섹션의 모든 채널 목록을 스크롤로 표시 */}
