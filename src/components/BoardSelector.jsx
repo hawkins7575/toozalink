@@ -1,13 +1,45 @@
-import React, { useState } from 'react';
-import boardsData from '../data/boardsData.js';
+import React, { useState, useEffect } from 'react';
 import BoardDetail from './BoardDetail';
+import { getBoards, getBoardStats } from '../lib/boardApi';
 import '../styles-boards.css';
 
 const BoardSelector = () => {
   const [selectedBoard, setSelectedBoard] = useState(null);
+  const [boards, setBoards] = useState([]);
+  const [boardStats, setBoardStats] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleBoardSelect = (boardId) => {
-    setSelectedBoard(boardId);
+  // 게시판 목록 로드
+  useEffect(() => {
+    const loadBoards = async () => {
+      try {
+        setLoading(true);
+        const boardsData = await getBoards();
+        setBoards(boardsData);
+        
+        // 각 게시판의 통계 정보 로드
+        const stats = {};
+        for (const board of boardsData) {
+          const boardStat = await getBoardStats(board.id);
+          stats[board.id] = boardStat;
+        }
+        setBoardStats(stats);
+        
+        setError(null);
+      } catch (err) {
+        console.error('게시판 로드 실패:', err);
+        setError('게시판을 불러오는데 실패했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadBoards();
+  }, []);
+
+  const handleBoardSelect = (board) => {
+    setSelectedBoard(board);
   };
 
   const handleBackToSelector = () => {
@@ -18,9 +50,35 @@ const BoardSelector = () => {
   if (selectedBoard) {
     return (
       <BoardDetail 
-        board={boardsData[selectedBoard]} 
+        board={selectedBoard} 
         onBack={handleBackToSelector}
       />
+    );
+  }
+
+  // 로딩 상태
+  if (loading) {
+    return (
+      <div className="board-selector-layout">
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>게시판을 불러오고 있습니다...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 에러 상태
+  if (error) {
+    return (
+      <div className="board-selector-layout">
+        <div className="error-container">
+          <p className="error-message">{error}</p>
+          <button onClick={() => window.location.reload()} className="retry-btn">
+            다시 시도
+          </button>
+        </div>
+      </div>
     );
   }
 
@@ -33,41 +91,42 @@ const BoardSelector = () => {
       </div>
 
       <div className="boards-grid">
-        {Object.values(boardsData).map((board) => (
-          <div 
-            key={board.id} 
-            className="board-card"
-            onClick={() => handleBoardSelect(board.id)}
-            style={{ '--board-color': board.color }}
-          >
-            <div className="board-icon">
-              {board.icon}
-            </div>
-            
-            <div className="board-info">
-              <h3 className="board-title">{board.title}</h3>
-              <p className="board-description">{board.description}</p>
+        {boards.map((board) => {
+          const stats = boardStats[board.id] || { totalPosts: 0, totalViews: 0 };
+          return (
+            <div 
+              key={board.id} 
+              className="board-card"
+              onClick={() => handleBoardSelect(board)}
+              style={{ '--board-color': board.color }}
+            >
+              <div className="board-icon">
+                {board.icon}
+              </div>
               
-              <div className="board-stats">
-                <div className="board-stat">
-                  <span className="stat-label">게시글</span>
-                  <span className="stat-value">{board.posts.length}</span>
-                </div>
-                <div className="board-stat">
-                  <span className="stat-label">조회수</span>
-                  <span className="stat-value">
-                    {board.posts.reduce((total, post) => total + post.views, 0)}
-                  </span>
+              <div className="board-info">
+                <h3 className="board-title">{board.title}</h3>
+                <p className="board-description">{board.description}</p>
+                
+                <div className="board-stats">
+                  <div className="board-stat">
+                    <span className="stat-label">게시글</span>
+                    <span className="stat-value">{stats.totalPosts}</span>
+                  </div>
+                  <div className="board-stat">
+                    <span className="stat-label">조회수</span>
+                    <span className="stat-value">{stats.totalViews}</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="board-enter-btn">
-              <span>입장하기</span>
-              <span className="enter-arrow">→</span>
+              <div className="board-enter-btn">
+                <span>입장하기</span>
+                <span className="enter-arrow">→</span>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
