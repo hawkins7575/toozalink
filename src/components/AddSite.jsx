@@ -136,7 +136,7 @@ const AddSite = React.memo(({ isOpen, onClose, onSubmit, type = "site" }) => {
         name: "",
         url: "",
         description: "",
-        category: type === "site" ? categories[1] : youtubeCategories[1],
+        category: type === "site" ? (categories[1] || "") : (youtubeCategories[1] || ""),
         tags: "",
         tips: "",
         difficulty: "쉬움"
@@ -148,21 +148,21 @@ const AddSite = React.memo(({ isOpen, onClose, onSubmit, type = "site" }) => {
     } finally {
       setIsSubmitting(false);
     }
-  }, [formData, validateForm, onSubmit, type]);
+  }, [formData, validateForm, onSubmit, type, categories, youtubeCategories]);
 
   const handleClose = useCallback(() => {
     setFormData({
       name: "",
       url: "",
       description: "",
-      category: type === "site" ? categories[1] : youtubeCategories[1],
+      category: type === "site" ? (categories[1] || "") : (youtubeCategories[1] || ""),
       tags: "",
       tips: "",
       difficulty: "쉬움"
     });
     setErrors({});
     onClose();
-  }, [type, onClose]);
+  }, [type, onClose, categories, youtubeCategories]);
 
   if (!isOpen) return null;
 

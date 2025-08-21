@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import Favicon from "./Favicon";
 
 const SimpleFavoriteCard = ({ site, isFavorite, onToggleFavorite, onRemove }) => {
   const handleVisit = (e) => {
@@ -28,7 +29,13 @@ const SimpleFavoriteCard = ({ site, isFavorite, onToggleFavorite, onRemove }) =>
         <div className="simple-card-main" onClick={handleVisit}>
           <div className="simple-card-info">
             <h4 className="simple-site-name">
-              {site.name}
+              <Favicon 
+                url={site.url} 
+                siteName={site.name} 
+                size={16} 
+                className="site-favicon"
+              />
+              <span className="site-name-text">{site.name}</span>
               {site.isUserSubmitted && (
                 <span 
                   className="user-badge"

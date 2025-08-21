@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
+import Favicon from './Favicon';
 
 const YoutubeCategoryBoxLayout = ({ 
   channels, 
@@ -106,7 +107,13 @@ const YoutubeCategoryBoxLayout = ({
                       <div className="youtube-channel-content">
                         <div className="youtube-channel-header">
                           <h4 className="youtube-channel-name">
-                            📺 {channel.name}
+                            <Favicon 
+                              url={channel.url} 
+                              siteName={channel.name} 
+                              size={16} 
+                              className="site-favicon"
+                            />
+                            <span className="site-name-text">{channel.name}</span>
                             {channel.isUserSubmitted && (
                               <span 
                                 className="user-badge"

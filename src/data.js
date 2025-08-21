@@ -1,4 +1,25 @@
-// 기본 주식 사이트 데이터
+import { supabase } from './lib/supabase';
+
+// Supabase 연결 상태 확인
+let isSupabaseConnected = false;
+
+// 연결 테스트
+const testSupabaseConnection = async () => {
+  try {
+    const { error } = await supabase.from('categories').select('count');
+    if (!error) {
+      isSupabaseConnected = true;
+      console.log('✅ Supabase 연결 성공');
+    }
+  } catch (err) {
+    console.warn('⚠️ Supabase 연결 실패, localStorage 사용');
+  }
+};
+
+// 앱 시작 시 연결 테스트
+testSupabaseConnection();
+
+// 기본 주식 사이트 데이터 (폴백용)
 const defaultStockSites = [
   // ① 공식거래소·공시
   {
@@ -977,8 +998,26 @@ export const allTags = [
   "창투사", "작전주", "차트분석", "기술적분석"
 ];
 
-// 동적 데이터 로딩 함수들
-export const getStockSites = () => {
+// 동적 데이터 로딩 함수들 (Supabase + localStorage 통합)
+export const getStockSites = async () => {
+  // Supabase에서 데이터 시도
+  if (isSupabaseConnected) {
+    try {
+      const { data, error } = await supabase
+        .from('sites')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        console.log('✅ Supabase에서 사이트 데이터 로드:', data.length + '개');
+        return data;
+      }
+    } catch (err) {
+      console.warn('⚠️ Supabase 사이트 로드 실패:', err);
+    }
+  }
+
+  // localStorage 폴백
   try {
     const adminSites = localStorage.getItem('adminSites');
     return adminSites ? JSON.parse(adminSites) : defaultStockSites;
@@ -988,7 +1027,25 @@ export const getStockSites = () => {
   }
 };
 
-export const getYoutubeChannels = () => {
+export const getYoutubeChannels = async () => {
+  // Supabase에서 데이터 시도
+  if (isSupabaseConnected) {
+    try {
+      const { data, error } = await supabase
+        .from('youtube_channels')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        console.log('✅ Supabase에서 유튜브 채널 데이터 로드:', data.length + '개');
+        return data;
+      }
+    } catch (err) {
+      console.warn('⚠️ Supabase 유튜브 채널 로드 실패:', err);
+    }
+  }
+
+  // localStorage 폴백
   try {
     const adminChannels = localStorage.getItem('adminChannels');
     return adminChannels ? JSON.parse(adminChannels) : defaultYoutubeChannels;
@@ -998,28 +1055,185 @@ export const getYoutubeChannels = () => {
   }
 };
 
-export const getCategories = () => {
+export const getCategories = async (type = 'site') => {
+  // Supabase에서 데이터 시도
+  if (isSupabaseConnected) {
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('name')
+        .eq('type', type)
+        .order('created_at', { ascending: true });
+
+      if (!error && data) {
+        const categoryNames = ['전체', ...data.map(cat => cat.name)];
+        console.log(`✅ Supabase에서 ${type} 카테고리 로드:`, categoryNames.length + '개');
+        return categoryNames;
+      }
+    } catch (err) {
+      console.warn(`⚠️ Supabase ${type} 카테고리 로드 실패:`, err);
+    }
+  }
+
+  // localStorage 폴백
   try {
-    const adminCategories = localStorage.getItem('adminSiteCategories');
-    return adminCategories ? JSON.parse(adminCategories) : defaultCategories;
+    const storageKey = type === 'site' ? 'adminSiteCategories' : 'adminYtCategories';
+    const defaultData = type === 'site' ? defaultCategories : defaultYoutubeCategories;
+    const adminCategories = localStorage.getItem(storageKey);
+    return adminCategories ? JSON.parse(adminCategories) : defaultData;
   } catch (error) {
-    console.warn('Failed to load admin categories:', error);
-    return defaultCategories;
+    console.warn(`Failed to load admin ${type} categories:`, error);
+    return type === 'site' ? defaultCategories : defaultYoutubeCategories;
   }
 };
 
-export const getYoutubeCategories = () => {
+export const getYoutubeCategories = async () => {
+  return await getCategories('youtube');
+};
+
+// 데이터 추가/수정/삭제 함수들
+export const addSiteToData = async (siteData) => {
+  if (isSupabaseConnected) {
+    try {
+      const { data, error } = await supabase
+        .from('sites')
+        .insert([{
+          name: siteData.name,
+          url: siteData.url,
+          description: siteData.description,
+          category: siteData.category,
+          tags: siteData.tags || [],
+          tips: siteData.tips || '',
+          difficulty: siteData.difficulty || 'normal',
+          is_user_submitted: true,
+          submitted_by: 'user'
+        }])
+        .select()
+        .single();
+
+      if (!error) {
+        console.log('✅ Supabase에 사이트 추가 성공:', data);
+        return data;
+      }
+    } catch (err) {
+      console.warn('⚠️ Supabase 사이트 추가 실패:', err);
+    }
+  }
+
+  // localStorage 폴백
   try {
-    const adminYtCategories = localStorage.getItem('adminYtCategories');
-    return adminYtCategories ? JSON.parse(adminYtCategories) : defaultYoutubeCategories;
+    const sites = localStorage.getItem('adminSites');
+    const currentSites = sites ? JSON.parse(sites) : defaultStockSites;
+    const newSite = {
+      id: Date.now(),
+      ...siteData,
+      difficulty: siteData.difficulty || 'normal'
+    };
+    const updatedSites = [newSite, ...currentSites];
+    localStorage.setItem('adminSites', JSON.stringify(updatedSites));
+    console.log('✅ localStorage에 사이트 추가 성공');
+    return newSite;
   } catch (error) {
-    console.warn('Failed to load admin YouTube categories:', error);
-    return defaultYoutubeCategories;
+    console.error('❌ 사이트 추가 실패:', error);
+    throw error;
   }
 };
 
-// 기존 export를 동적 함수로 대체
-export const stockSites = getStockSites();
-export const youtubeChannels = getYoutubeChannels();
-export const categories = getCategories();
-export const youtubeCategories = getYoutubeCategories();
+export const addYoutubeChannelToData = async (channelData) => {
+  if (isSupabaseConnected) {
+    try {
+      const { data, error } = await supabase
+        .from('youtube_channels')
+        .insert([{
+          name: channelData.name,
+          url: channelData.url,
+          category: channelData.category,
+          difficulty: channelData.difficulty || 'normal',
+          tips: channelData.tips || '',
+          is_user_submitted: true,
+          submitted_by: 'user'
+        }])
+        .select()
+        .single();
+
+      if (!error) {
+        console.log('✅ Supabase에 유튜브 채널 추가 성공:', data);
+        return data;
+      }
+    } catch (err) {
+      console.warn('⚠️ Supabase 유튜브 채널 추가 실패:', err);
+    }
+  }
+
+  // localStorage 폴백
+  try {
+    const channels = localStorage.getItem('adminChannels');
+    const currentChannels = channels ? JSON.parse(channels) : defaultYoutubeChannels;
+    const newChannel = {
+      id: Date.now(),
+      ...channelData,
+      difficulty: channelData.difficulty || 'normal'
+    };
+    const updatedChannels = [newChannel, ...currentChannels];
+    localStorage.setItem('adminChannels', JSON.stringify(updatedChannels));
+    console.log('✅ localStorage에 유튜브 채널 추가 성공');
+    return newChannel;
+  } catch (error) {
+    console.error('❌ 유튜브 채널 추가 실패:', error);
+    throw error;
+  }
+};
+
+export const addCategoryToData = async (categoryName, type = 'site') => {
+  if (isSupabaseConnected) {
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .insert([{
+          name: categoryName,
+          type: type,
+          icon: type === 'site' ? 'chart' : 'video',
+          color: 'blue'
+        }])
+        .select()
+        .single();
+
+      if (!error) {
+        console.log(`✅ Supabase에 ${type} 카테고리 추가 성공:`, data);
+        return data;
+      }
+    } catch (err) {
+      console.warn(`⚠️ Supabase ${type} 카테고리 추가 실패:`, err);
+    }
+  }
+
+  // localStorage 폴백
+  try {
+    const storageKey = type === 'site' ? 'adminSiteCategories' : 'adminYtCategories';
+    const defaultData = type === 'site' ? defaultCategories : defaultYoutubeCategories;
+    const categories = localStorage.getItem(storageKey);
+    const currentCategories = categories ? JSON.parse(categories) : defaultData;
+    
+    if (!currentCategories.includes(categoryName)) {
+      const updatedCategories = [...currentCategories, categoryName];
+      localStorage.setItem(storageKey, JSON.stringify(updatedCategories));
+      console.log(`✅ localStorage에 ${type} 카테고리 추가 성공`);
+    }
+    return { name: categoryName, type };
+  } catch (error) {
+    console.error(`❌ ${type} 카테고리 추가 실패:`, error);
+    throw error;
+  }
+};
+
+// 이니셜 데이터 로드 (비동기이므로 Promise 반환)
+export const stockSitesPromise = getStockSites();
+export const youtubeChannelsPromise = getYoutubeChannels();
+export const categoriesPromise = getCategories('site');
+export const youtubeCategoriesPromise = getCategories('youtube');
+
+// 기존 컴포넌트 호환성을 위한 동기식 export (fallback 데이터)
+export const stockSites = defaultStockSites;
+export const youtubeChannels = defaultYoutubeChannels;
+export const categories = defaultCategories;
+export const youtubeCategories = defaultYoutubeCategories;

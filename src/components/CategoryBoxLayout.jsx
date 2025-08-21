@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { getCategories } from '../data';
+import Favicon from './Favicon';
 
 const CategoryBoxLayout = ({ 
   sites, 
@@ -132,7 +133,13 @@ const CategoryBoxLayout = ({
                       <div className="site-box-content">
                         <div className="site-box-header">
                           <h4 className="site-box-name">
-                            {site.name}
+                            <Favicon 
+                              url={site.url} 
+                              siteName={site.name} 
+                              size={16} 
+                              className="site-favicon"
+                            />
+                            <span className="site-name-text">{site.name}</span>
                             {site.isUserSubmitted && (
                               <span 
                                 className="user-badge"

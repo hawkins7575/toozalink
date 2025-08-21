@@ -15,6 +15,8 @@ import BoardSelector from "./components/BoardSelector";
 import MobileHeader from "./components/MobileHeader";
 import useUserSubmissions from "./hooks/useUserSubmissions";
 import useAuth from "./hooks/useAuth";
+// import { useSupabaseData } from "./hooks/useSupabaseData"; // 나중에 사용 예정
+import { testConnection } from "./lib/supabase";
 import "./styles.css";
 import "./styles-new.css";
 import "./styles-category-box.css";
@@ -22,15 +24,19 @@ import "./styles-youtube-category.css";
 import "./styles-four-section.css";
 import "./modal-styles.css";
 import "./styles-mobile-optimized.css";
+import "./styles-favicon.css";
 
 function App() {
+  console.log('🚀 App component 로드됨');
   const { user, isLoading, isAuthenticated, isAdmin, login, logout, register, updateUser } = useAuth();
+  // const supabaseData = useSupabaseData(); // 나중에 사용 예정
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [, setDataVersion] = useState(0); // 데이터 업데이트 트리거
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dbStatus, setDbStatus] = useState('connecting'); // connecting, connected, fallback
   
   const [favorites, setFavorites] = useState(() => {
     try {
@@ -87,6 +93,23 @@ function App() {
         ? prevFavorites.filter((fid) => fid !== id)
         : [...prevFavorites, id]
     );
+  }, []);
+
+  // Supabase 연결 테스트
+  useEffect(() => {
+    const initializeDatabase = async () => {
+      try {
+        const isConnected = await testConnection();
+        setDbStatus(isConnected ? 'connected' : 'fallback');
+      } catch (error) {
+        console.warn('Database initialization failed:', error);
+        setDbStatus('fallback');
+      }
+    };
+
+    // 타이머로 안전하게 실행
+    const timer = setTimeout(initializeDatabase, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -167,12 +190,17 @@ function App() {
     window.dispatchEvent(new CustomEvent('categoryUpdate'));
   }, []);
 
-  // 로딩 중일 때
+  // 로딩 중일 때 (Supabase 로딩은 백그라운드에서 진행하고 앱은 바로 시작)
   if (isLoading) {
     return (
       <div className="loading-container">
         <div className="loading-spinner"></div>
         <p>로딩 중...</p>
+        <div className="db-status">
+          {dbStatus === 'connecting' && '🔄 데이터베이스 연결 중...'}
+          {dbStatus === 'connected' && '✅ Supabase 연결됨'}
+          {dbStatus === 'fallback' && '⚠️ 로컬 데이터 사용'}
+        </div>
       </div>
     );
   }

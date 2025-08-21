@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import Favicon from "./Favicon";
 
 const CompactSiteCard = ({ site, isFavorite, onToggleFavorite, onRemove }) => {
   const handleVisit = (e) => {
@@ -41,7 +42,13 @@ const CompactSiteCard = ({ site, isFavorite, onToggleFavorite, onRemove }) => {
           <div className="compact-title-section">
             <div className="compact-title-row">
               <h4 className="compact-site-name">
-                {site.name}
+                <Favicon 
+                  url={site.url} 
+                  siteName={site.name} 
+                  size={16} 
+                  className="site-favicon"
+                />
+                <span className="site-name-text">{site.name}</span>
                 {site.isUserSubmitted && (
                   <span 
                     className="user-badge"

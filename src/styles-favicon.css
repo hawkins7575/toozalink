@@ -1,0 +1,131 @@
+/* 파비콘 스타일 */
+.site-favicon, .site-favicon-compact {
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+
+.site-name-text {
+  flex: 1;
+}
+
+.compact-site-name {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+  margin: 0;
+}
+
+.site-box-name {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+  margin: 0;
+  margin-bottom: 4px;
+}
+
+.site-name-with-favicon {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex: 1;
+}
+
+.site-name-compact {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-left: 0;
+}
+
+/* 파비콘 컨테이너 공통 스타일 */
+.favicon-container {
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.favicon-container img {
+  border-radius: 2px;
+}
+
+.favicon-fallback {
+  border-radius: 2px;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+}
+
+.favicon-loading {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+  .site-favicon, .site-favicon-compact {
+    margin-right: 6px;
+  }
+  
+  .compact-site-name {
+    font-size: 0.9rem;
+  }
+  
+  .site-box-name {
+    font-size: 0.9rem;
+  }
+  
+  .site-name-compact {
+    font-size: 0.8rem;
+  }
+}
+
+/* 유튜브 채널에도 파비콘 스타일 적용 */
+.youtube-channel-name {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+  margin: 0;
+  margin-bottom: 4px;
+}
+
+.youtube-channel-name .site-favicon {
+  margin-right: 8px;
+}
+
+.youtube-channel-name .site-name-text {
+  flex: 1;
+}
+
+/* SimpleFavoriteCard 파비콘 스타일 */
+.simple-site-name {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+  margin: 0;
+  margin-bottom: 4px;
+}
+
+.simple-site-name .site-favicon {
+  margin-right: 8px;
+}
+
+.simple-site-name .site-name-text {
+  flex: 1;
+}
