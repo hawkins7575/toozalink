@@ -54,7 +54,7 @@ export const testConnection = async (force = false) => {
     if (error) {
       // ping 함수가 없다면 최소한의 쿼리 실행
       const { error: fallbackError } = await supabase
-        .from('categories')
+        .from('boards')
         .select('id')
         .limit(1)
         .single();

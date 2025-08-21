@@ -109,5 +109,7 @@
 [functions]
   node_bundler = "esbuild"
 
-# Edge Functions 최적화 (커스텀 도메인 성능 향상)
-[edge_functions]
+# Edge Functions 설정 (추후 확장 예정)
+# [[edge_functions]]
+#   path = "/*"
+#   function = "handler"
