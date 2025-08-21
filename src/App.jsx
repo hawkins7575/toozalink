@@ -291,10 +291,10 @@ function App() {
                   className={`sidebar-btn ${currentView === "boards" ? 'active' : ''}`}
                   onClick={() => setCurrentView("boards")}
                   aria-current={currentView === "boards" ? "page" : undefined}
-                  aria-label="게시판으로 이동"
+                  aria-label="주식게시판으로 이동"
                 >
                   <span className="sidebar-icon" aria-hidden="true">💬</span>
-                  <span className="sidebar-text">게시판</span>
+                  <span className="sidebar-text">주식게시판</span>
                 </button>
                 <button 
                   className={`sidebar-btn ${currentView === "masters" ? 'active' : ''}`}

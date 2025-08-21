@@ -28,7 +28,7 @@ const BoardSelector = () => {
   return (
     <div className="board-selector-layout">
       <div className="board-selector-header">
-        <h1>게시판</h1>
+        <h1>주식게시판</h1>
         <p>다양한 주제의 게시판에서 투자 관련 정보를 공유하고 소통하세요</p>
       </div>
 

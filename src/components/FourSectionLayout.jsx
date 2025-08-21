@@ -100,7 +100,7 @@ const FourSectionLayout = ({ favorites, onToggleFavorite, onSiteClick }) => {
       '분석도구': '투자 분석 도구를 활용하세요',
       '교육': '투자 교육 자료를 학습하세요'
     };
-    return descriptionMap[category] || '투자에 도움이 되는 사이트들입니다';
+    return descriptionMap[category] || '투자 관련 사이트';
   };
 
   // 동적으로 섹션 생성

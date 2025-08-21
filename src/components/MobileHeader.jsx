@@ -14,7 +14,7 @@ const MobileHeader = ({
       'dashboard': '대시보드',
       'sites': '주식 사이트',
       'youtube': '유튜브 채널',
-      'boards': '게시판',
+      'boards': '주식게시판',
       'masters': '투자의 대가',
       'profile': '프로필'
     };
