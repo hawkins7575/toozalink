@@ -5,23 +5,41 @@ import Favicon from './Favicon';
 const FourSectionLayout = ({ favorites, onToggleFavorite, onSiteClick }) => {
   const [stockSites, setStockSites] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [sitesData, categoriesData] = await Promise.all([
-          getStockSites(),
-          getCategories('site')
-        ]);
-        setStockSites(sitesData);
-        setCategories(categoriesData);
+        // 폴백 데이터 먼저 로드하여 즉시 표시
+        const fallbackData = await import('../data');
+        setStockSites(fallbackData.stockSites || []);
+        setCategories(fallbackData.categories || []);
+        setIsLoading(false); // 폴백 데이터 로드 완료
+
+        // 그 다음 실제 데이터 로드 (백그라운드)
+        try {
+          const [sitesData, categoriesData] = await Promise.all([
+            getStockSites(),
+            getCategories('site')
+          ]);
+          
+          // 데이터가 실제로 있을 때만 업데이트
+          if (sitesData && sitesData.length > 0) {
+            setStockSites(sitesData);
+          }
+          if (categoriesData && categoriesData.length > 0) {
+            setCategories(categoriesData);
+          }
+        } catch (apiError) {
+          console.warn('API 데이터 로딩 실패, 폴백 데이터 사용:', apiError);
+          // 폴백 데이터가 이미 로드되어 있으므로 추가 작업 불필요
+        }
       } catch (error) {
-        console.error('데이터 로딩 실패:', error);
-        // 폴백으로 기본 데이터 사용
-        import('../data').then(module => {
-          setStockSites(module.stockSites);
-          setCategories(module.categories);
-        });
+        console.error('모든 데이터 로딩 실패:', error);
+        // 최소한의 기본 데이터라도 설정
+        setStockSites([]);
+        setCategories(['증권사', '뉴스/정보', '분석/데이터', '커뮤니티']);
+        setIsLoading(false);
       }
     };
 
@@ -184,6 +202,22 @@ const FourSectionLayout = ({ favorites, onToggleFavorite, onSiteClick }) => {
     onSiteClick(site.id);
     window.open(site.url, '_blank', 'noopener,noreferrer');
   };
+
+  // 로딩 중일 때
+  if (isLoading) {
+    return (
+      <div className="four-section-layout">
+        <div className="layout-header">
+          <h1>주식 투자 사이트</h1>
+          <p>신뢰할 수 있는 주식 투자 사이트들을 카테고리별로 만나보세요</p>
+        </div>
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>사이트 목록을 불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="four-section-layout">

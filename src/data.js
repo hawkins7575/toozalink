@@ -3,20 +3,27 @@ import { supabase } from './lib/supabase';
 // Supabase 연결 상태 확인
 let isSupabaseConnected = false;
 
-// 연결 테스트
+// 연결 테스트 (지연 실행)
 const testSupabaseConnection = async () => {
   try {
-    const { error } = await supabase.from('categories').select('count');
-    if (!error) {
-      isSupabaseConnected = true;
-      console.log('✅ Supabase 연결 성공');
-    }
+    // 3초 후에 백그라운드에서 연결 테스트
+    setTimeout(async () => {
+      try {
+        const { error } = await supabase.from('categories').select('count');
+        if (!error) {
+          isSupabaseConnected = true;
+          console.log('✅ Supabase 연결 성공 (백그라운드)');
+        }
+      } catch (err) {
+        console.warn('⚠️ Supabase 연결 실패, localStorage 사용');
+      }
+    }, 3000);
   } catch (err) {
-    console.warn('⚠️ Supabase 연결 실패, localStorage 사용');
+    console.warn('⚠️ Supabase 연결 테스트 스케줄링 실패');
   }
 };
 
-// 앱 시작 시 연결 테스트
+// 앱 로딩 후 백그라운드에서 연결 테스트
 testSupabaseConnection();
 
 // 기본 주식 사이트 데이터 (폴백용)
