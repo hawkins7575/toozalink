@@ -7,6 +7,10 @@
   NODE_VERSION = "18"
   CI = "false"
 
+# 커스텀 도메인 최적화 설정
+[context.production]
+  command = "npm run build"
+
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
@@ -17,26 +21,54 @@
   to = "/index.html"
   status = 200
 
+# 성능 최적화를 위한 헤더 설정
 [[headers]]
   for = "/static/*"
   [headers.values]
-    Cache-Control = "public, max-age=31536000"
+    Cache-Control = "public, max-age=31536000, immutable"
+    X-Content-Type-Options = "nosniff"
 
 [[headers]]
   for = "/*.js"
   [headers.values]
-    Cache-Control = "public, max-age=31536000"
+    Cache-Control = "public, max-age=31536000, immutable"
+    X-Content-Type-Options = "nosniff"
 
 [[headers]]
   for = "/*.css"
   [headers.values]
-    Cache-Control = "public, max-age=31536000"
+    Cache-Control = "public, max-age=31536000, immutable"
+    X-Content-Type-Options = "nosniff"
+
+[[headers]]
+  for = "/*.woff2"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    X-Content-Type-Options = "nosniff"
+
+[[headers]]
+  for = "/*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    X-Content-Type-Options = "nosniff"
+
+[[headers]]
+  for = "/*.ico"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
 
 [[headers]]
   for = "/manifest.json"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
+# 메인 HTML 파일 - 커스텀 도메인 최적화
 [[headers]]
   for = "/index.html"
   [headers.values]
@@ -45,6 +77,24 @@
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+    # 커스텀 도메인 성능 최적화
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    # DNS 프리페치 최적화
+    X-DNS-Prefetch-Control = "on"
+    # 압축 최적화
+    Accept-Encoding = "gzip, deflate, br"
+
+# 루트 경로 최적화
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # 커스텀 도메인 연결 최적화
+    Connection = "keep-alive"
+    # GZIP 압축 강제 활성화
+    Content-Encoding = "gzip"
 
 [functions]
   node_bundler = "esbuild"
+
+# Edge Functions 최적화 (커스텀 도메인 성능 향상)
+[edge_functions]

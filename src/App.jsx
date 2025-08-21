@@ -184,14 +184,14 @@ function App() {
     );
   }
 
-  // 구조화된 데이터 스키마
+  // 구조화된 데이터 스키마 (커스텀 도메인 적용)
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "My Stock Link",
-    "alternateName": "마이 스톡 링크",
+    "name": "Tooza Link",
+    "alternateName": "투자 링크 모음",
     "description": "주식 투자를 위한 신뢰할 수 있는 사이트들과 유튜브 채널을 한 곳에서 관리하세요",
-    "url": "https://mystocklink.com",
+    "url": "https://tooza.shop",
     "applicationCategory": "FinanceApplication",
     "operatingSystem": "Web Browser",
     "offers": {
@@ -201,10 +201,15 @@ function App() {
     },
     "creator": {
       "@type": "Organization",
-      "name": "My Stock Link"
+      "name": "Tooza Link",
+      "url": "https://tooza.shop"
     },
     "datePublished": "2025-01-18",
-    "inLanguage": "ko-KR"
+    "inLanguage": "ko-KR",
+    "sameAs": [
+      "https://tooza.shop",
+      "https://mystocklink.netlify.app"
+    ]
   };
 
   return (
