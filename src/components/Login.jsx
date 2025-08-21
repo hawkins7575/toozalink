@@ -55,16 +55,38 @@ const Login = ({ onLogin, onSwitchToRegister, onClose }) => {
     setErrors({});
     
     try {
-      // 실제 API 호출 대신 로컬 스토리지에서 사용자 확인
+      // 관리자 계정 확인
+      const ADMIN_CREDENTIALS = {
+        email: 'daesung75',
+        password: 'wlsl3014'
+      };
+
+      if (formData.email === ADMIN_CREDENTIALS.email && formData.password === ADMIN_CREDENTIALS.password) {
+        // 관리자 로그인 성공
+        const adminLoginData = {
+          id: 'admin',
+          email: formData.email,
+          name: '관리자',
+          isAdmin: true,
+          loginTime: new Date().toISOString()
+        };
+        
+        localStorage.setItem('currentUser', JSON.stringify(adminLoginData));
+        onLogin(adminLoginData);
+        return;
+      }
+
+      // 일반 사용자 확인
       const users = JSON.parse(localStorage.getItem('users') || '[]');
       const user = users.find(u => u.email === formData.email && u.password === formData.password);
       
       if (user) {
-        // 로그인 성공
+        // 일반 사용자 로그인 성공
         const loginData = {
           id: user.id,
           email: user.email,
           name: user.name,
+          isAdmin: false,
           loginTime: new Date().toISOString()
         };
         
@@ -145,6 +167,13 @@ const Login = ({ onLogin, onSwitchToRegister, onClose }) => {
         </form>
         
         <div className="auth-footer">
+          <div className="admin-info">
+            <p><strong>🔐 관리자 로그인 정보:</strong></p>
+            <p>아이디: daesung75</p>
+            <p>비밀번호: wlsl3014</p>
+            <small>* 관리자 전용 계정입니다.</small>
+          </div>
+          
           <p>
             계정이 없으신가요?{' '}
             <button 

@@ -44,3 +44,30 @@
   background-color: #f0f0f0;
   color: #333;
 }
+
+/* 관리자 정보 스타일 */
+.admin-info {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.admin-info p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #495057;
+}
+
+.admin-info p:first-child {
+  color: #2563eb;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.admin-info small {
+  color: #6c757d;
+  font-style: italic;
+}
