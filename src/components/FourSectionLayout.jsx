@@ -61,59 +61,15 @@ const FourSectionLayout = ({ favorites, onToggleFavorite, onSiteClick }) => {
     return colorMap[category] || 'blue';
   };
 
-  const getCategoryIcon = (category) => {
-    const iconMap = {
-      '증권사': '📈',
-      '뉴스/정보': '📰',
-      '분석/데이터': '📊',
-      '커뮤니티': '👥',
-      '투자정보': '📊',
-      '뉴스': '📰',
-      '분석도구': '🔍',
-      '교육': '📚'
-    };
-    return iconMap[category] || '📈';
-  };
-
-  const getCategorySubtitle = (category) => {
-    const subtitleMap = {
-      '증권사': '주식 거래 및 투자 플랫폼',
-      '뉴스/정보': '실시간 시장 정보 및 뉴스',
-      '분석/데이터': '차트 분석 및 데이터',
-      '커뮤니티': '투자자들과의 소통',
-      '투자정보': '투자 관련 정보',
-      '뉴스': '경제 뉴스',
-      '분석도구': '분석 도구',
-      '교육': '투자 교육'
-    };
-    return subtitleMap[category] || '투자 관련 사이트';
-  };
-
-  const getCategoryDescription = (category) => {
-    const descriptionMap = {
-      '증권사': '신뢰할 수 있는 증권사 플랫폼에서 안전하게 투자하세요',
-      '뉴스/정보': '최신 경제 뉴스와 시장 동향을 빠르게 확인하세요',
-      '분석/데이터': '전문적인 분석 도구로 투자 결정을 내리세요',
-      '커뮤니티': '다른 투자자들과 정보를 공유하고 소통하세요',
-      '투자정보': '다양한 투자 정보를 확인하세요',
-      '뉴스': '경제 뉴스를 확인하세요',
-      '분석도구': '투자 분석 도구를 활용하세요',
-      '교육': '투자 교육 자료를 학습하세요'
-    };
-    return descriptionMap[category] || '투자 관련 사이트';
-  };
 
   // 동적으로 섹션 생성
   const sections = categories
     .filter(category => category !== '전체')
-    .map((category, index) => ({
+    .map((category) => ({
       id: category.toLowerCase().replace(/[^a-z0-9]/g, ''),
       title: category,
-      subtitle: getCategorySubtitle(category),
-      icon: getCategoryIcon(category),
       color: getCategoryColor(category),
-      sites: getSitesByCategory(category),
-      description: getCategoryDescription(category)
+      sites: getSitesByCategory(category)
     }));
 
   const handleSiteClick = (site) => {
@@ -123,28 +79,14 @@ const FourSectionLayout = ({ favorites, onToggleFavorite, onSiteClick }) => {
 
   return (
     <div className="four-section-layout">
-      {/* 헤더 */}
-      <div className="layout-header">
-        <h1>주식 투자 플랫폼</h1>
-        <p>신뢰할 수 있는 주식 투자 사이트들을 카테고리별로 만나보세요</p>
-      </div>
-
       {/* 동적 섹션 그리드 */}
       <div className="sections-grid">
         {sections.length > 0 ? sections.map((section) => (
           <div key={section.id} className={`section-card ${section.color}`}>
             <div className="section-header">
-              <div className="section-icon">{section.icon}</div>
               <div className="section-info">
                 <h3>{section.title}</h3>
-                <p>{section.subtitle}</p>
               </div>
-              <div className="section-count">
-                {section.sites.length}
-              </div>
-            </div>
-            <div className="section-description">
-              {section.description}
             </div>
             
             {/* 각 섹션의 모든 사이트 목록을 스크롤로 표시 */}
