@@ -61,13 +61,48 @@ const FourSectionLayout = ({ favorites, onToggleFavorite, onSiteClick }) => {
     return colorMap[category] || 'blue';
   };
 
+  // 영어 카테고리를 한글로 변환
+  const getCategoryKoreanTitle = (category) => {
+    const titleMap = {
+      // 영어 카테고리들을 한글로 매핑
+      'Securities': '증권사',
+      'News/Info': '뉴스/정보',
+      'Analysis/Data': '분석/데이터',
+      'Community': '커뮤니티',
+      'Official Exchange': '공식거래소',
+      'Investment Info': '투자정보',
+      'Education': '교육',
+      'Portal': '포털사이트',
+      'Government': '정부기관',
+      'Financial Service': '금융서비스',
+      'Global Portal': '글로벌포털',
+      'Public Data': '공공데이터',
+      'Financial Portal': '금융정보포털',
+      // 이미 한글인 경우는 그대로 반환
+      '증권사': '증권사',
+      '뉴스/정보': '뉴스/정보',
+      '분석/데이터': '분석/데이터',
+      '커뮤니티': '커뮤니티',
+      '공식거래소': '공식거래소',
+      '투자정보': '투자정보',
+      '교육': '교육',
+      '포털사이트': '포털사이트',
+      '정부기관': '정부기관',
+      '금융서비스': '금융서비스',
+      '글로벌포털': '글로벌포털',
+      '공공데이터': '공공데이터',
+      '금융정보포털': '금융정보포털'
+    };
+    return titleMap[category] || category;
+  };
+
 
   // 동적으로 섹션 생성
   const sections = categories
     .filter(category => category !== '전체')
     .map((category) => ({
       id: category.toLowerCase().replace(/[^a-z0-9]/g, ''),
-      title: category,
+      title: getCategoryKoreanTitle(category),
       color: getCategoryColor(category),
       sites: getSitesByCategory(category)
     }));
